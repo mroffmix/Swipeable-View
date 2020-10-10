@@ -28,7 +28,7 @@ extension EditActionColor {
 }
 
 public struct Action: Identifiable {
-    public init(title: String, iconName: String, bgColor: EditActionColor, action: () -> ()?) {
+    public init(title: String, iconName: String, bgColor: EditActionColor, action: @escaping () -> ()?) {
         self.title = title
         self.iconName = iconName
         self.bgColor = bgColor
