@@ -37,7 +37,7 @@ public struct Action: Identifiable {
 
 open class EditActionsVM: ObservableObject {
     let actions: [Action]
-    init(_ actions: [Action]) {
+    public init(_ actions: [Action]) {
         self.actions = Array(actions.prefix(4))
     }
 }
