@@ -10,7 +10,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     
     let content: Content
     
-    init(@ViewBuilder content: () -> Content, viewModel: T, geometryProxy: GeometryProxy) {
+    public init(@ViewBuilder content: () -> Content, viewModel: T, geometryProxy: GeometryProxy) {
         self.content = content()
         self.viewModel = viewModel
         self.proxy = geometryProxy
