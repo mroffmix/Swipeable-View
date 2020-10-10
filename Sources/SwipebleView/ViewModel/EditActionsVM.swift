@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-open enum EditActionColor {
+public enum EditActionColor {
     case edit
     case delete
     case done
@@ -27,8 +27,8 @@ extension EditActionColor {
     }
 }
 
-open struct Action: Identifiable {
-    let id: UUID = UUID.init()
+public struct Action: Identifiable {
+    public let id: UUID = UUID.init()
     let title: String
     let iconName: String
     let bgColor: EditActionColor
@@ -42,11 +42,11 @@ open class EditActionsVM: ObservableObject {
     }
 }
 
-open struct EditActions: View {
+public struct EditActions: View {
     
     @ObservedObject var viewModel: EditActionsVM
     
-    var body: some View {
+    public var body: some View {
         
         GeometryReader { reader in
             HStack {

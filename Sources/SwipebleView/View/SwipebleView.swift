@@ -2,7 +2,7 @@ import SwiftUI
 
 
 
-open struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
+public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     
     var proxy: GeometryProxy
     @Environment(\.colorScheme) var colorScheme
@@ -16,7 +16,7 @@ open struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
         self.proxy = geometryProxy
     }
     
-    var body: some View {
+    public var body: some View {
         
         ZStack {
             
