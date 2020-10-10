@@ -28,6 +28,13 @@ extension EditActionColor {
 }
 
 public struct Action: Identifiable {
+    public init(title: String, iconName: String, bgColor: EditActionColor, action: () -> ()?) {
+        self.title = title
+        self.iconName = iconName
+        self.bgColor = bgColor
+        self.action = action
+    }
+    
     public let id: UUID = UUID.init()
     let title: String
     let iconName: String
