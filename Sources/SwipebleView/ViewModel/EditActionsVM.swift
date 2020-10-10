@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum EditActionColor {
+open enum EditActionColor {
     case edit
     case delete
     case done
@@ -27,7 +27,7 @@ extension EditActionColor {
     }
 }
 
-struct Action: Identifiable {
+open struct Action: Identifiable {
     let id: UUID = UUID.init()
     let title: String
     let iconName: String
@@ -35,14 +35,14 @@ struct Action: Identifiable {
     let action: () -> ()?
 }
 
-class EditActionsVM: ObservableObject {
+open class EditActionsVM: ObservableObject {
     let actions: [Action]
     init(_ actions: [Action]) {
         self.actions = Array(actions.prefix(4))
     }
 }
 
-struct EditActions: View {
+open struct EditActions: View {
     
     @ObservedObject var viewModel: EditActionsVM
     

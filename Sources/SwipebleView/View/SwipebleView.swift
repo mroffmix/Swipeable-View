@@ -2,7 +2,7 @@ import SwiftUI
 
 
 
-struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
+open struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     
     var proxy: GeometryProxy
     @Environment(\.colorScheme) var colorScheme
@@ -51,15 +51,20 @@ struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
         )
     }
 }
+class example: SwipebleViewModel {
+    var dragOffset: CGSize = CGSize.zero
+    var actions: EditActionsVM = EditActionsVM([])
+}
+@available(iOS 14.0, *)
+struct SwipebleView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+                GeometryReader { reader in
+                    SwipebleView(content: {
+                        Text("text")
+                    }, viewModel: example(), geometryProxy: reader)
+                }
+        }
 
-//@available(iOS 14.0, *)
-//struct SwipebleView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Group {
-//                GeometryReader { reader in
-//                    SwipebleView(proxy: reader, viewModel: VehicleCellVM.init(ledVehicle: veh))
-//                }
-//        }
-//
-//    }
-//}
+    }
+}
