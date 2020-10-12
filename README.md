@@ -9,11 +9,8 @@
 
 
 <p align="center">
-
   <h3 align="center">Swipeable View</h3>
-
   <p align="center">
-  ![Swipeable View](./Resources/sample.gif)
     <br />
     <a href="https://github.com/mroffmix/SwipebleViewExample"><strong>Check usage example »</strong></a>
     <br />
@@ -31,6 +28,7 @@
 Simple "editActionsForRowAt" functionality, written on SWIFTUI 
 Can be applied without list to every view. 
 
+![Swipeable View](https://github.com/mroffmix/SwipebleView/blob/main/Resources/sample.gif)
 <!-- Installation-->
 ## Installation
 
