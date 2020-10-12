@@ -60,7 +60,7 @@ public struct EditActions: View {
         
         DispatchQueue.main.async { self.frameSize = geometry.size }
         
-        return HStack(alignment: .top, spacing: 5) {
+        return HStack(alignment: .center, spacing: 5) {
             ForEach(viewModel.actions) { action in
                 Button(action: {
                     action.action()
