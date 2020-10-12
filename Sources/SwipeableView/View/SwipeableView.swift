@@ -1,22 +1,18 @@
+//
+//  SwipeableView.swift
+//  SwipeableView
+//
+//  Created by Ilya on 10.10.20.
+//
+
 import SwiftUI
 
-
-
-public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
+public struct SwipeableView<T,Content: View>: View  where T: SwipeableViewModel{
     
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var viewModel: T
     @State var frame: CGSize = .zero
     @State private var actions: EditActions?
-    @State private var isShowed: Bool = false
-    {
-        didSet {
-            if !isShowed {
-                viewModel.dragOffset = .zero
-            }
-        }
-    }
-    
     
     let content: Content
     
@@ -68,7 +64,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     }
 }
 
-class example: SwipebleViewModel {
+class example: SwipeableViewModel {
     @Published var dragOffset: CGSize = CGSize.zero
     @Published var actions: EditActionsVM = EditActionsVM([], maxActions: 4)
 }
@@ -78,7 +74,7 @@ struct SwipebleView_Previews: PreviewProvider {
         GeometryReader { reader in
             VStack {
                 Spacer()
-                SwipebleView(content: {
+                SwipeableView(content: {
                     HStack {
                         Spacer()
                         Text("View content")

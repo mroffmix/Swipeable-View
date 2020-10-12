@@ -1,5 +1,5 @@
 import XCTest
-@testable import SwipebleView
+@testable import SwipeableView
 
 final class swipableviewTests: XCTestCase {
     func testExample() {
