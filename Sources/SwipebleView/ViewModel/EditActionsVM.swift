@@ -44,8 +44,8 @@ public struct Action: Identifiable {
 
 open class EditActionsVM: ObservableObject {
     let actions: [Action]
-    public init(_ actions: [Action]) {
-        self.actions = Array(actions.prefix(4))
+    public init(_ actions: [Action], maxActions: Int) {
+        self.actions = Array(actions.prefix(maxActions))
     }
 }
 
@@ -53,7 +53,7 @@ public struct EditActions: View {
     
     @ObservedObject var viewModel: EditActionsVM
     @State var frameSize: CGSize = .zero
-    var height: CGFloat
+    @Binding var height: CGFloat
     
     private func makeView(_ geometry: GeometryProxy) -> some View {
         print(geometry.size.width, geometry.size.height)
@@ -101,22 +101,8 @@ public struct EditActions: View {
 }
 
 struct EditActions_Previews: PreviewProvider {
+    
     static var actions = [
-        Action(title: "No interest", iconName: "trash", bgColor: .delete, action: {})
-    ]
-    
-    static var actions2 = [
-        Action(title: "No interest", iconName: "trash", bgColor: .delete, action: {}),
-        Action(title: "Request offer", iconName: "doc.text", bgColor: .edit, action: {})
-    ]
-    
-    static var actions3 = [
-        Action(title: "No interest", iconName: "trash", bgColor: .delete, action: {}),
-        Action(title: "Request offer", iconName: "doc.text", bgColor: .edit, action: {}),
-        Action(title: "Order", iconName: "doc.text.fill", bgColor: .delete, action: {})
-    ]
-    
-    static var actions4 = [
         Action(title: "No interest", iconName: "trash", bgColor: .delete, action: {}),
         Action(title: "Request offer", iconName: "doc.text", bgColor: .edit, action: {}),
         Action(title: "Order", iconName: "doc.text.fill", bgColor: .delete, action: {}),
@@ -124,17 +110,20 @@ struct EditActions_Previews: PreviewProvider {
     ]
     static var previews: some View {
         Group {
-            EditActions(viewModel: EditActionsVM(actions), height: 35)
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: .constant(35))
                 .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions4), height: 35)
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: .constant(35))
                 .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions2), height: 100).previewLayout(.fixed(width: 450, height: 150))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 2), height: .constant(100))
+                .previewLayout(.fixed(width: 450, height: 150))
             
-            EditActions(viewModel: EditActionsVM(actions3), height: 200).previewLayout(.fixed(width: 450, height: 250))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 3), height: .constant(200))
+                .previewLayout(.fixed(width: 450, height: 250))
             
-            EditActions(viewModel: EditActionsVM(actions4), height: 300).previewLayout(.fixed(width: 450, height: 350))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: .constant(300))
+                .previewLayout(.fixed(width: 450, height: 350))
             
             
         }
