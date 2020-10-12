@@ -53,7 +53,7 @@ Added an example project, with **iOS, watchOS** target: https://github.com/mroff
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-```
+```swift
 
 
 SwipebleView(content: {
@@ -66,8 +66,10 @@ SwipebleView(content: {
     .background(Color.blue)
 }, viewModel: example(count: $0))
 .frame(height: 100)
+```
+Create view model with actions (using SwipebleViewModel protocol)
 
-
+```swift
 class example: SwipebleViewModel {
     var count: Int
     @Published var dragOffset: CGSize = CGSize.zero
@@ -75,20 +77,16 @@ class example: SwipebleViewModel {
     
     init(count: Int) {
         actions =  EditActionsVM([
-            Action(title: "Delete", iconName: "trash", bgColor: .delete, action: {}),
-            Action(title: "Edit existing document", iconName: "doc.text", bgColor: .edit, action: {}),
-            Action(title: "New doc", iconName: "doc.text.fill", bgColor: .delete, action: {}),
-            Action(title: "Create", iconName: "pencil.circle", bgColor: .done, action: {})
+            Action(title: "Delete", iconName: "trash", bgColor: .delete, action: {/* place your action here */}),
+            Action(title: "Edit existing document", iconName: "doc.text", bgColor: .edit, action: {/* place your action here */}),
+            Action(title: "New doc", iconName: "doc.text.fill", bgColor: .delete, action: {/* place your action here */}),
+            Action(title: "Create", iconName: "pencil.circle", bgColor: .done, action: {/* place your action here */})
         ], maxActions: count)
         self.count = count
     }
 }
 
 ```
-
-
-
-
 
 <!-- ROADMAP -->
 ## Roadmap
