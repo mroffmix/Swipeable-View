@@ -68,7 +68,7 @@ public struct EditActions: View {
                             .font(.system(size: 20))
                             .padding()
                         
-                        if viewModel.actions.count < 4  { // && height > 50
+                        if viewModel.actions.count < 4 && geometry.size.height > 50 {
                             Text(action.title)
                                 .font(.system(size: 12))
                                 .multilineTextAlignment(.center)
@@ -76,10 +76,11 @@ public struct EditActions: View {
                         }
                         
                     }
-                    .frame(maxHeight: .infinity)
-                    .frame(width: 60)
-                    //.frame(maxWidth: (geometry.size.width)/CGFloat(viewModel.actions.count))
+                    //.frame(maxHeight: .infinity)
                     .padding(8)
+                    .frame(width: 60, height: geometry.size.height)
+                    //.frame(maxWidth: (geometry.size.width)/CGFloat(viewModel.actions.count))
+                    
                     .background(action.bgColor.value.opacity(0.8))
                     .cornerRadius(10)
                 })
