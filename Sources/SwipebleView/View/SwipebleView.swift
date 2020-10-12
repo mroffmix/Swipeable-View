@@ -25,7 +25,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
             DispatchQueue.main.async { self.frame = geometry.size }
 
             return content
-                    .frame(width: geometry.size.width)
+                .frame(width: geometry.size.width, height: geometry.size.height)
         }
     
     public var body: some View {
@@ -41,7 +41,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
             GeometryReader { (geometry) in
                 self.makeView(geometry)
             }
-            .frame(maxHeight:.infinity)
+            .frame(maxHeight: frame.height)
             .offset(x: viewModel.dragOffset.width)
         }
         .frame(height: frame.height, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
@@ -54,7 +54,9 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
         .gesture(
             DragGesture(minimumDistance: 3.0, coordinateSpace: .local)
                 .onEnded { value in
+                    
                     withAnimation {
+                        print(viewModel.dragOffset)
                         if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
                             viewModel.dragOffset = CGSize.init(width: -1*(proxy.size.width * (CGFloat(min(4, viewModel.actions.actions.count)) * 0.2)), height: 0)
                         }
