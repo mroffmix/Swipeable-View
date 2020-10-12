@@ -34,7 +34,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
             ZStack {
                 //HStack {
                     //Spacer().frame(width: geometry.size.width * (1 - CGFloat(min(4, viewModel.actions.actions.count)) * 0.231), height: 1, alignment: .center)
-                EditActions(viewModel: viewModel.actions, height: self.frame.height)
+                EditActions(viewModel: viewModel.actions)
                 //}
                 GeometryReader { reader in
                     self.makeView(reader)
