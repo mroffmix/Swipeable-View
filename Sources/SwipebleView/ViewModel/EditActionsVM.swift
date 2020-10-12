@@ -79,7 +79,7 @@ public struct EditActions: View {
                         
                     }
                     .frame(maxHeight: .infinity)
-                    .frame(maxWidth: (geometry.size.width)/CGFloat(viewModel.actions.count))
+                    //.frame(maxWidth: (geometry.size.width)/CGFloat(viewModel.actions.count))
                     .padding(8)
                     .background(action.bgColor.value.opacity(0.8))
                     .cornerRadius(10)
