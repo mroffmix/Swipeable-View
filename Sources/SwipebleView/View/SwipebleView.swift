@@ -6,7 +6,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var viewModel: T
-    @State var frame: CGSize = .zero
+   // @State var frame: CGSize = .zero
     @State private var actions: EditActions?
     
     
@@ -35,8 +35,6 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
                 
                 self.makeView()
                     .offset(x: viewModel.dragOffset.width)
-                    
-                    .frame(height: frame.height, alignment: .center)
                     .onTapGesture(count: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/, perform: {
                         withAnimation {
                             viewModel.dragOffset = CGSize.zero
@@ -50,7 +48,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
                                 withAnimation {
                                     print(viewModel.dragOffset)
                                     if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
-                                        viewModel.dragOffset = (CGSize.init(width: CGFloat(min(4, viewModel.actions.actions.count)) * -80, height: 0))
+                                        viewModel.dragOffset = (CGSize.init(width: (CGFloat(min(4, viewModel.actions.actions.count)) * -80 - 10), height: 0))
                                         //CGSize.init(
                                         //  width: -1*(geometry.size.width * (CGFloat(min(4, viewModel.actions.actions.count)) * 0.2) + CGFloat(viewModel.actions.actions.count * 20)),
                                         //   height: 0)
