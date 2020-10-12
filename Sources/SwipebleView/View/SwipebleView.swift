@@ -19,7 +19,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
         
     }
     
-    func makeView(_ geometry: GeometryProxy) -> some View {
+    private func makeView(_ geometry: GeometryProxy) -> some View {
             print(geometry.size.width, geometry.size.height)
 
             DispatchQueue.main.async { self.frame = geometry.size }
@@ -41,7 +41,6 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
             GeometryReader { (geometry) in
                 self.makeView(geometry)
             }
-            content
             .frame(maxHeight:.infinity)
             .offset(x: viewModel.dragOffset.width)
         }
