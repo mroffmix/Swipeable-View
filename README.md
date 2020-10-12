@@ -10,10 +10,10 @@
 
 <p align="center">
   <h1 align="center">Swipeable View</h1>
-  <a href="https://github.com/github_username/repo_name">
+  <p align="center">
+   <a href="https://github.com/github_username/repo_name">
      <img src="https://github.com/mroffmix/SwipebleView/blob/main/Resources/logo.jpg" alt="Logo" width="400">
    </a>
-  <p align="center">
     <br />
     <a href="https://github.com/mroffmix/SwipebleViewExample"><strong>Check usage example »</strong></a>
     <br />
