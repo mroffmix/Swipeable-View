@@ -34,6 +34,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
                 //}
                 
                 self.makeView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .offset(x: viewModel.dragOffset.width)
                     .onTapGesture(count: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/, perform: {
                         withAnimation {
