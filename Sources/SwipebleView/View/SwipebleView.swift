@@ -31,17 +31,10 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     }
     
     public var body: some View {
-         let bindingHeight = Binding<CGFloat>(
-            get: {
-                frame.height
-            },
-            set: {
-                frame.height = $0
-            }
-        )
+         
         
         DispatchQueue.main.async {
-            self.actions = EditActions(viewModel: viewModel.actions, height: bindingHeight)
+            self.actions = EditActions(viewModel: viewModel.actions, height: frame.height)
         }
         
         return ZStack {

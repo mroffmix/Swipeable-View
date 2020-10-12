@@ -53,7 +53,7 @@ public struct EditActions: View {
     
     @ObservedObject var viewModel: EditActionsVM
     @State var frameSize: CGSize = .zero
-    @Binding var height: CGFloat
+    @State var height: CGFloat
     
     private func makeView(_ geometry: GeometryProxy) -> some View {
         print(geometry.size.width, geometry.size.height)
@@ -110,19 +110,19 @@ struct EditActions_Previews: PreviewProvider {
     ]
     static var previews: some View {
         Group {
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: .constant(35))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: 35)
                 .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: .constant(35))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: 35)
                 .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 2), height: .constant(100))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 2), height: 100)
                 .previewLayout(.fixed(width: 450, height: 150))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 3), height: .constant(200))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 3), height: 200)
                 .previewLayout(.fixed(width: 450, height: 250))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: .constant(300))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: 300)
                 .previewLayout(.fixed(width: 450, height: 350))
             
             
