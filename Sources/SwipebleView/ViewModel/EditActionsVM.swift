@@ -111,7 +111,7 @@ struct EditActions_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             EditActions(viewModel: EditActionsVM(actions, maxActions: 4))
-                .previewLayout(.fixed(width: 450, height: 100))
+                .previewLayout(.fixed(width: 450, height: 400))
             
             EditActions(viewModel: EditActionsVM(actions, maxActions: 4))
                 .previewLayout(.fixed(width: 450, height: 100))
