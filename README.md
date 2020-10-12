@@ -48,7 +48,7 @@ import the package in the file you would like to use it: `import SwiftUICharts`
 
 ### Demo
 
-Added an example project, with **iOS, watchOS** target: https://github.com/mroffmix/SwipebleViewExample
+Added an example project, with **iOS** target: https://github.com/mroffmix/SwipebleViewExample
 
 
 <!-- USAGE EXAMPLES -->
