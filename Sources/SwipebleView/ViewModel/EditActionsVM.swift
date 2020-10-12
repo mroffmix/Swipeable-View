@@ -56,9 +56,7 @@ public struct EditActions: View {
    // @State var height: CGFloat
     
     private func makeView(_ geometry: GeometryProxy) -> some View {
-        print(geometry.size.width, geometry.size.height)
-        
-        
+        print("EditActions: = \(geometry.size.width) , \(geometry.size.height)")
         
         return HStack(alignment: .center, spacing: 5) {
             ForEach(viewModel.actions) { action in
