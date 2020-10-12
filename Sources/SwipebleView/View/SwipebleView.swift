@@ -8,16 +8,14 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     @ObservedObject var viewModel: T
     @State var frame: CGSize = .zero
     @State private var actions: EditActions?
-    
-    
-    
+    @State private var backGroundColor: Color?
+
     let content: Content
     
-    public init(@ViewBuilder content: () -> Content, viewModel: T, geometryProxy: GeometryProxy) {
+    public init(@ViewBuilder content: () -> Content, viewModel: T, backGroundColor: Color) {
         self.content = content()
-        
         self.viewModel = viewModel
-        
+        self.backGroundColor = backGroundColor
     }
     
     private func makeView(_ geometry: GeometryProxy) -> some View {
@@ -33,10 +31,8 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
         
         return
             ZStack {
-                //HStack {
-                    //Spacer().frame(width: geometry.size.width * (1 - CGFloat(min(4, viewModel.actions.actions.count)) * 0.231), height: 1, alignment: .center)
+
                 EditActions(viewModel: viewModel.actions)
-                //}
                 GeometryReader { reader in
                     self.makeView(reader)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -56,11 +52,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
                                     print(viewModel.dragOffset)
                                     if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
                                         viewModel.dragOffset = (CGSize.init(width: (CGFloat(min(4, viewModel.actions.actions.count)) * -80 - 10), height: 0))
-                                        //CGSize.init(
-                                        //  width: -1*(geometry.size.width * (CGFloat(min(4, viewModel.actions.actions.count)) * 0.2) + CGFloat(viewModel.actions.actions.count * 20)),
-                                        //   height: 0)
-                                        
-                                        // viewModel.dragOffset = CGSize.init(width: -1 * (actions?.frameSize.width ?? 0), height: 0)
+                                       
                                     }
                                     else if value.translation.width > 0 && value.translation.height > -30 && value.translation.height < 30 {
                                         viewModel.dragOffset = CGSize.zero
@@ -69,6 +61,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
                             }
                     )
             }.frame(height: .infinity)
+            .background(backGroundColor)
     }
 }
 
@@ -90,7 +83,7 @@ struct SwipebleView_Previews: PreviewProvider {
                     }.padding()
                     .background(Color.blue)
                     
-                }, viewModel: example(), geometryProxy: reader)
+                }, viewModel: example(), backGroundColor: .red)
                 
                 Spacer()
             }
