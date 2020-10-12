@@ -25,7 +25,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
             DispatchQueue.main.async { self.frame = geometry.size }
 
             return content
-                .frame(width: geometry.size.width, height: geometry.size.height)
+                .frame(width: geometry.size.width)
         }
     
     public var body: some View {
@@ -40,7 +40,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
             }
             GeometryReader { (geometry) in
                 self.makeView(geometry)
-                    .frame(maxHeight: frame.height)
+                    .frame(maxHeight: .infinity)
             }
             
             .offset(x: viewModel.dragOffset.width)

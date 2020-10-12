@@ -64,16 +64,16 @@ public struct EditActions: View {
                         Button(action: {
                             action.action()
                         }, label: {
-                            VStack {
+                            VStack (alignment: .center){
                                 Image(systemName: action.iconName)
-                                    .font(.system(size: 25))
+                                    .font(.system(size: (height > 50) ? 30 : 20))
                                     .padding()
-                                if viewModel.actions.count < 4 {
+                                
+                                if viewModel.actions.count < 4 && height > 50 {
                                     Text(action.title)
                                         .font(.system(size: 12))
                                         .multilineTextAlignment(.center)
                                         .lineLimit(3)
-                                    //Spacer()
                                 }
                                 
                             }
@@ -115,9 +115,11 @@ struct EditActions_Previews: PreviewProvider {
     ]
     static var previews: some View {
         Group {
-            EditActions(viewModel: EditActionsVM(actions), height: 100)
-                .colorScheme(.dark)
-                .previewLayout(.fixed(width: 450, height: 150))
+            EditActions(viewModel: EditActionsVM(actions), height: 35)
+                .previewLayout(.fixed(width: 450, height: 100))
+            
+            EditActions(viewModel: EditActionsVM(actions4), height: 35)
+                .previewLayout(.fixed(width: 450, height: 100))
             
             EditActions(viewModel: EditActionsVM(actions2), height: 100).previewLayout(.fixed(width: 450, height: 150))
             
