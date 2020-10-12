@@ -39,7 +39,10 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
                 frame.height = $0
             }
         )
-        self.actions = EditActions(viewModel: viewModel.actions, height: bindingHeight)
+        
+        DispatchQueue.main.async {
+            self.actions = EditActions(viewModel: viewModel.actions, height: bindingHeight)            
+        }
         
         return ZStack {
             
