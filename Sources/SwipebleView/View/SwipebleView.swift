@@ -40,8 +40,9 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
             }
             GeometryReader { (geometry) in
                 self.makeView(geometry)
+                    .frame(maxHeight: frame.height)
             }
-            .frame(maxHeight: frame.height)
+            
             .offset(x: viewModel.dragOffset.width)
         }
         .frame(height: frame.height, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
