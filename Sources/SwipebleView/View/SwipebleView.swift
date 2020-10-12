@@ -7,6 +7,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     var proxy: GeometryProxy
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var viewModel: T
+    @State var frame: CGSize = .zero
     
     let content: Content
     
@@ -14,18 +15,32 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
         self.content = content()
         self.viewModel = viewModel
         self.proxy = geometryProxy
+        
+        
     }
+    
+    func makeView(_ geometry: GeometryProxy) -> some View {
+            print(geometry.size.width, geometry.size.height)
+
+            DispatchQueue.main.async { self.frame = geometry.size }
+
+            return content
+                    .frame(width: geometry.size.width)
+        }
     
     public var body: some View {
         
         ZStack {
             
+            
             HStack {
                 Spacer().frame(width: proxy.size.width * (1 - CGFloat(min(4, viewModel.actions.actions.count)) * 0.231), height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                EditActions(viewModel: viewModel.actions)
+                EditActions(viewModel: viewModel.actions, height: frame.height)
                 
             }
-
+            GeometryReader { (geometry) in
+                self.makeView(geometry)
+            }
             content
             .frame(maxHeight:.infinity)
             .offset(x: viewModel.dragOffset.width)
@@ -52,8 +67,8 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     }
 }
 class example: SwipebleViewModel {
-    var dragOffset: CGSize = CGSize.zero
-    var actions: EditActionsVM = EditActionsVM([])
+    @Published var dragOffset: CGSize = CGSize.zero
+    @Published var actions: EditActionsVM = EditActionsVM([])
 }
 @available(iOS 14.0, *)
 struct SwipebleView_Previews: PreviewProvider {

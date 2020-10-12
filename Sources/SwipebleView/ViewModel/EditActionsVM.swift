@@ -52,6 +52,7 @@ open class EditActionsVM: ObservableObject {
 public struct EditActions: View {
     
     @ObservedObject var viewModel: EditActionsVM
+    var height: CGFloat
     
     public var body: some View {
         
@@ -76,7 +77,7 @@ public struct EditActions: View {
                                 }
                                 
                             }
-                            .frame(maxHeight: .infinity)
+                            .frame(maxHeight: height)
                             .frame(maxWidth: (reader.size.width)/CGFloat(viewModel.actions.count))
                             .padding(8)
                             .background(action.bgColor.value.opacity(0.8))
@@ -114,15 +115,15 @@ struct EditActions_Previews: PreviewProvider {
     ]
     static var previews: some View {
         Group {
-            EditActions(viewModel: EditActionsVM(actions))
+            EditActions(viewModel: EditActionsVM(actions), height: 100)
                 .colorScheme(.dark)
                 .previewLayout(.fixed(width: 450, height: 150))
             
-            EditActions(viewModel: EditActionsVM(actions2)).previewLayout(.fixed(width: 450, height: 150))
+            EditActions(viewModel: EditActionsVM(actions2), height: 100).previewLayout(.fixed(width: 450, height: 150))
             
-            EditActions(viewModel: EditActionsVM(actions3)).previewLayout(.fixed(width: 450, height: 150))
+            EditActions(viewModel: EditActionsVM(actions3), height: 200).previewLayout(.fixed(width: 450, height: 250))
             
-            EditActions(viewModel: EditActionsVM(actions4)).previewLayout(.fixed(width: 450, height: 150))
+            EditActions(viewModel: EditActionsVM(actions4), height: 300).previewLayout(.fixed(width: 450, height: 350))
             
             
         }
