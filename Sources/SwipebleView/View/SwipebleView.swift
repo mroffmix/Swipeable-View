@@ -44,6 +44,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
             .frame(maxHeight:.infinity)
             .offset(x: viewModel.dragOffset.width)
         }
+        .frame(height: frame.height, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
         .onTapGesture(count: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/, perform: {
             withAnimation {
                 viewModel.dragOffset = CGSize.zero
