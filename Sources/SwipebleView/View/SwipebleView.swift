@@ -4,21 +4,19 @@ import SwiftUI
 
 public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     
-    var proxy: GeometryProxy
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var viewModel: T
     @State var frame: CGSize = .zero
     @State private var actions: EditActions?
     
-   
+    
     
     let content: Content
     
     public init(@ViewBuilder content: () -> Content, viewModel: T, geometryProxy: GeometryProxy) {
         self.content = content()
-    
+        
         self.viewModel = viewModel
-        self.proxy = geometryProxy
         
     }
     
@@ -32,54 +30,48 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     }
     
     public var body: some View {
-         
         
-        DispatchQueue.main.async {
-            self.actions = EditActions(viewModel: viewModel.actions, height: proxy.size.height)
-        }
-        
-        return ZStack {
-            
-            
-            HStack {
-                Spacer().frame(width: proxy.size.width * (1 - CGFloat(min(4, viewModel.actions.actions.count)) * 0.231), height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                actions
+        return GeometryReader { (geometry) in
+            ZStack {
+                HStack {
+                    Spacer().frame(width: geometry.size.width * (1 - CGFloat(min(4, viewModel.actions.actions.count)) * 0.231), height: 1, alignment: .center)
+                    EditActions(viewModel: viewModel.actions, height: geometry.size.height)
+                }
                 
-            }
-            GeometryReader { (geometry) in
                 self.makeView(geometry)
                     .frame(maxHeight: .infinity)
             }
             
             .offset(x: viewModel.dragOffset.width)
-        }
-        .frame(height: frame.height, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-        .onTapGesture(count: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/, perform: {
-            withAnimation {
-                viewModel.dragOffset = CGSize.zero
-            }
-        })
-        
-        .gesture(
-            DragGesture(minimumDistance: 3.0, coordinateSpace: .local)
-                .onEnded { value in
-                    
-                    withAnimation {
-                        print(viewModel.dragOffset)
-                        print("\(actions?.frameSize.width)")
-                        if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
-                            viewModel.dragOffset = CGSize.init(
-                                width: -1*(proxy.size.width * (CGFloat(min(4, viewModel.actions.actions.count)) * 0.2) + CGFloat(viewModel.actions.actions.count * 20)),
-                                height: 0)
-                            
-                              // viewModel.dragOffset = CGSize.init(width: -1 * (actions?.frameSize.width ?? 0), height: 0)
-                        }
-                        else if value.translation.width > 0 && value.translation.height > -30 && value.translation.height < 30 {
-                            viewModel.dragOffset = CGSize.zero
+            
+            .frame(height: frame.height, alignment: .center)
+            .onTapGesture(count: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/, perform: {
+                withAnimation {
+                    viewModel.dragOffset = CGSize.zero
+                }
+            })
+            
+            .gesture(
+                DragGesture(minimumDistance: 3.0, coordinateSpace: .local)
+                    .onEnded { value in
+                        
+                        withAnimation {
+                            print(viewModel.dragOffset)
+                            print("\(actions?.frameSize.width)")
+                            if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
+                                viewModel.dragOffset = CGSize.init(
+                                    width: -1*(geometry.size.width * (CGFloat(min(4, viewModel.actions.actions.count)) * 0.2) + CGFloat(viewModel.actions.actions.count * 20)),
+                                    height: 0)
+                                
+                                // viewModel.dragOffset = CGSize.init(width: -1 * (actions?.frameSize.width ?? 0), height: 0)
+                            }
+                            else if value.translation.width > 0 && value.translation.height > -30 && value.translation.height < 30 {
+                                viewModel.dragOffset = CGSize.zero
+                            }
                         }
                     }
-                }
-        )
+            )
+        }
     }
 }
 
