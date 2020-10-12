@@ -52,13 +52,13 @@ open class EditActionsVM: ObservableObject {
 public struct EditActions: View {
     
     @ObservedObject var viewModel: EditActionsVM
-    @State var frameSize: CGSize = .zero
-    @State var height: CGFloat
+   // @State var frameSize: CGSize = .zero
+   // @State var height: CGFloat
     
     private func makeView(_ geometry: GeometryProxy) -> some View {
         print(geometry.size.width, geometry.size.height)
         
-        DispatchQueue.main.async { self.frameSize = geometry.size }
+        
         
         return HStack(alignment: .center, spacing: 5) {
             ForEach(viewModel.actions) { action in
@@ -67,10 +67,10 @@ public struct EditActions: View {
                 }, label: {
                     VStack (alignment: .center){
                         Image(systemName: action.iconName)
-                            .font(.system(size: (height > 50) ? 30 : 20))
+                            .font(.system(size: 20))
                             .padding()
                         
-                        if viewModel.actions.count < 4 && height > 50 {
+                        if viewModel.actions.count < 4  { // && height > 50
                             Text(action.title)
                                 .font(.system(size: 12))
                                 .multilineTextAlignment(.center)
@@ -79,11 +79,13 @@ public struct EditActions: View {
                         
                     }
                     .frame(maxHeight: .infinity)
+                    .frame(width: 60)
                     //.frame(maxWidth: (geometry.size.width)/CGFloat(viewModel.actions.count))
                     .padding(8)
                     .background(action.bgColor.value.opacity(0.8))
                     .cornerRadius(10)
-                }).accentColor(.white)
+                })
+                .accentColor(.white)
             }
         }
     }
@@ -110,20 +112,20 @@ struct EditActions_Previews: PreviewProvider {
     ]
     static var previews: some View {
         Group {
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: 35)
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4))
                 .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: 35)
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4))
                 .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 2), height: 100)
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 2))
                 .previewLayout(.fixed(width: 450, height: 150))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 3), height: 200)
-                .previewLayout(.fixed(width: 450, height: 250))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 3))
+                .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: 300)
-                .previewLayout(.fixed(width: 450, height: 350))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4))
+                .previewLayout(.fixed(width: 550, height: 80))
             
             
         }

@@ -34,12 +34,12 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
         return GeometryReader { (geometry) in
             ZStack {
                 HStack {
-                    Spacer().frame(width: geometry.size.width * (1 - CGFloat(min(4, viewModel.actions.actions.count)) * 0.231), height: 1, alignment: .center)
-                    EditActions(viewModel: viewModel.actions, height: geometry.size.height)
+                    //Spacer().frame(width: geometry.size.width * (1 - CGFloat(min(4, viewModel.actions.actions.count)) * 0.231), height: 1, alignment: .center)
+                    EditActions(viewModel: viewModel.actions)
                 }
                 
                 self.makeView(geometry)
-                    .frame(maxHeight: .infinity)
+                    //.frame(maxHeight: .infinity)
             }
             
             .offset(x: viewModel.dragOffset.width)
@@ -57,11 +57,11 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
                         
                         withAnimation {
                             print(viewModel.dragOffset)
-                            print("\(actions?.frameSize.width)")
                             if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
-                                viewModel.dragOffset = CGSize.init(
-                                    width: -1*(geometry.size.width * (CGFloat(min(4, viewModel.actions.actions.count)) * 0.2) + CGFloat(viewModel.actions.actions.count * 20)),
-                                    height: 0)
+                                viewModel.dragOffset = (CGSize.init(width: CGFloat(min(4, viewModel.actions.actions.count)) * -60, height: 0))
+                                    //CGSize.init(
+                                  //  width: -1*(geometry.size.width * (CGFloat(min(4, viewModel.actions.actions.count)) * 0.2) + CGFloat(viewModel.actions.actions.count * 20)),
+                                 //   height: 0)
                                 
                                 // viewModel.dragOffset = CGSize.init(width: -1 * (actions?.frameSize.width ?? 0), height: 0)
                             }
