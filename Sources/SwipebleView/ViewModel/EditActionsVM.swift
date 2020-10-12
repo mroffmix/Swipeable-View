@@ -52,7 +52,7 @@ open class EditActionsVM: ObservableObject {
 public struct EditActions: View {
     
     @ObservedObject var viewModel: EditActionsVM
-    @Binding var isShowed: Bool
+    @Binding var isShowed: CGSize
     
     private func makeView(_ geometry: GeometryProxy) -> some View {
         print("EditActions: = \(geometry.size.width) , \(geometry.size.height)")
@@ -61,7 +61,9 @@ public struct EditActions: View {
             ForEach(viewModel.actions) { action in
                 Button(action: {
                     action.action()
-                    isShowed = false
+                    withAnimation {
+                        isShowed = CGSize.zero                        
+                    }
                 }, label: {
                     VStack (alignment: .center){
                         Image(systemName: action.iconName)
@@ -111,19 +113,19 @@ struct EditActions_Previews: PreviewProvider {
     ]
     static var previews: some View {
         Group {
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), isShowed: .constant(false))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), isShowed: .constant(CGSize.zero))
                 .previewLayout(.fixed(width: 450, height: 400))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), isShowed: .constant(false))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), isShowed: .constant(CGSize.zero))
                 .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 2), isShowed: .constant(false))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 2), isShowed: .constant(CGSize.zero))
                 .previewLayout(.fixed(width: 450, height: 150))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 3), isShowed: .constant(false))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 3), isShowed: .constant(CGSize.zero))
                 .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), isShowed: .constant(false))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), isShowed: .constant(CGSize.zero))
                 .previewLayout(.fixed(width: 550, height: 280))
             
             

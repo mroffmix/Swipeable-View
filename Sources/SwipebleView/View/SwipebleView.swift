@@ -36,7 +36,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
         return
             ZStack {
                 
-                EditActions(viewModel: viewModel.actions, isShowed: $isShowed)
+                EditActions(viewModel: viewModel.actions, isShowed: $viewModel.dragOffset)
                 GeometryReader { reader in
                     self.makeView(reader)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
