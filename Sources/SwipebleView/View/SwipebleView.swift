@@ -26,6 +26,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
         DispatchQueue.main.async { self.frame = geometry.size }
         
         return content
+            .frame(maxHeight: .infinity)
     }
     
     public var body: some View {
@@ -67,7 +68,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
                                 }
                             }
                     )
-            }.frame(height: self.frame.height)
+            }.frame(height: .infinity)
     }
 }
 
