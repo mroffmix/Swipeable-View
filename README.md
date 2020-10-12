@@ -116,7 +116,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Ilya Mikhailov - [@twitter_handle](https://twitter.com/mix_off) - mihailoov@gmail.com
+Ilya Mikhailov - [@mix_off](https://twitter.com/mix_off) - mihailoov@gmail.com
 
 Project Link: [https://github.com/mroffmix/SwipebleView](https://github.com/mroffmix/SwipebleView)
 
