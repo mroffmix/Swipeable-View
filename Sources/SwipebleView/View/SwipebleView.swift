@@ -46,7 +46,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
                             withAnimation {
                                 print(viewModel.dragOffset)
                                 if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
-                                    viewModel.dragOffset = (CGSize.init(width: (CGFloat(min(4, viewModel.actions.actions.count)) * -80), height: 0))
+                                    viewModel.dragOffset = (CGSize.init(width: (CGFloat(min(4, viewModel.actions.actions.count)) * -60 - CGFloat(min(4, viewModel.actions.actions.count)) * 5 ), height: 0))
                                     
                                 }
                                 else if value.translation.width > 0 && value.translation.height > -30 && value.translation.height < 30 {
