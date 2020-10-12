@@ -8,6 +8,15 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     @ObservedObject var viewModel: T
     @State var frame: CGSize = .zero
     @State private var actions: EditActions?
+    @State private var isShowed: Bool = false
+    {
+        didSet {
+            if !isShowed {
+                viewModel.dragOffset = .zero
+            }
+        }
+    }
+    
     
     let content: Content
     
@@ -27,7 +36,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
         return
             ZStack {
                 
-                EditActions(viewModel: viewModel.actions)
+                EditActions(viewModel: viewModel.actions, isShowed: $isShowed)
                 GeometryReader { reader in
                     self.makeView(reader)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
