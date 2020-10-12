@@ -67,7 +67,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
                                 }
                             }
                     )
-            }
+            }.frame(height: self.frame.height)
     }
 }
 
