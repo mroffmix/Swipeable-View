@@ -16,6 +16,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     
     public init(@ViewBuilder content: () -> Content, viewModel: T, geometryProxy: GeometryProxy) {
         self.content = content()
+    
         self.viewModel = viewModel
         self.proxy = geometryProxy
         
@@ -34,7 +35,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
          
         
         DispatchQueue.main.async {
-            self.actions = EditActions(viewModel: viewModel.actions, height: frame.height)
+            self.actions = EditActions(viewModel: viewModel.actions, height: proxy.size.height)
         }
         
         return ZStack {
