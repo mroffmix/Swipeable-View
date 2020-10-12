@@ -6,7 +6,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var viewModel: T
-   // @State var frame: CGSize = .zero
+    @State var frame: CGSize = .zero
     @State private var actions: EditActions?
     
     
@@ -20,7 +20,11 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
         
     }
     
-    private func makeView() -> some View {
+    private func makeView(_ geometry: GeometryProxy) -> some View {
+        print(geometry.size.width, geometry.size.height)
+
+        DispatchQueue.main.async { self.frame = geometry.size }
+        
         return content
     }
     
@@ -30,12 +34,13 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
             ZStack {
                 //HStack {
                     //Spacer().frame(width: geometry.size.width * (1 - CGFloat(min(4, viewModel.actions.actions.count)) * 0.231), height: 1, alignment: .center)
-                    EditActions(viewModel: viewModel.actions)
+                EditActions(viewModel: viewModel.actions, height: self.frame.height)
                 //}
-                
-                self.makeView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .offset(x: viewModel.dragOffset.width)
+                GeometryReader { reader in
+                    self.makeView(reader)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .offset(x: viewModel.dragOffset.width)
+                }
                     .onTapGesture(count: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/, perform: {
                         withAnimation {
                             viewModel.dragOffset = CGSize.zero

@@ -53,7 +53,7 @@ public struct EditActions: View {
     
     @ObservedObject var viewModel: EditActionsVM
    // @State var frameSize: CGSize = .zero
-   // @State var height: CGFloat
+    @State var height: CGFloat
     
     private func makeView(_ geometry: GeometryProxy) -> some View {
         print("EditActions: = \(geometry.size.width) , \(geometry.size.height)")
@@ -76,7 +76,7 @@ public struct EditActions: View {
                         }
                         
                     }
-                    .frame(maxHeight: .infinity)
+                    .frame(height: height)
                     .frame(width: 60)
                     //.frame(maxWidth: (geometry.size.width)/CGFloat(viewModel.actions.count))
                     .padding(8)
@@ -110,19 +110,19 @@ struct EditActions_Previews: PreviewProvider {
     ]
     static var previews: some View {
         Group {
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: 10)
                 .previewLayout(.fixed(width: 450, height: 400))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: 20)
                 .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 2))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 2), height: 50)
                 .previewLayout(.fixed(width: 450, height: 150))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 3))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 3), height: 100)
                 .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), height: 100)
                 .previewLayout(.fixed(width: 550, height: 80))
             
             
