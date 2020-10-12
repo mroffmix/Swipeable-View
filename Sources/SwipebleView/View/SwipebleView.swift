@@ -8,6 +8,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var viewModel: T
     @State var frame: CGSize = .zero
+    @State private var actions: EditActions?
     
     let content: Content
     
@@ -15,7 +16,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
         self.content = content()
         self.viewModel = viewModel
         self.proxy = geometryProxy
-        
+        self.actions = EditActions(viewModel: viewModel.actions, height: frame.height)
         
     }
     
@@ -35,7 +36,7 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
             
             HStack {
                 Spacer().frame(width: proxy.size.width * (1 - CGFloat(min(4, viewModel.actions.actions.count)) * 0.231), height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                EditActions(viewModel: viewModel.actions, height: frame.height)
+                actions
                 
             }
             GeometryReader { (geometry) in
@@ -59,7 +60,9 @@ public struct SwipebleView<T,Content: View>: View  where T: SwipebleViewModel{
                     withAnimation {
                         print(viewModel.dragOffset)
                         if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
-                            viewModel.dragOffset = CGSize.init(width: -1*(proxy.size.width * (CGFloat(min(4, viewModel.actions.actions.count)) * 0.2)), height: 0)
+                        //    viewModel.dragOffset = CGSize.init(width: -1*(proxy.size.width * (CGFloat(min(4, viewModel.actions.actions.count)) * 0.2)), height: 0)
+                            
+                            viewModel.dragOffset = CGSize.init(width: -1 * (actions?.frameSize.width ?? 0), height: 0)
                         }
                         else if value.translation.width > 0 && value.translation.height > -30 && value.translation.height < 30 {
                             viewModel.dragOffset = CGSize.zero

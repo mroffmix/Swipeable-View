@@ -52,39 +52,48 @@ open class EditActionsVM: ObservableObject {
 public struct EditActions: View {
     
     @ObservedObject var viewModel: EditActionsVM
+    @State var frameSize: CGSize = .zero
     var height: CGFloat
+    
+    private func makeView(_ geometry: GeometryProxy) -> some View {
+        print(geometry.size.width, geometry.size.height)
+        
+        DispatchQueue.main.async { self.frameSize = geometry.size }
+        
+        return HStack(alignment: .top, spacing: 5) {
+            ForEach(viewModel.actions) { action in
+                Button(action: {
+                    action.action()
+                }, label: {
+                    VStack (alignment: .center){
+                        Image(systemName: action.iconName)
+                            .font(.system(size: (height > 50) ? 30 : 20))
+                            .padding()
+                        
+                        if viewModel.actions.count < 4 && height > 50 {
+                            Text(action.title)
+                                .font(.system(size: 12))
+                                .multilineTextAlignment(.center)
+                                .lineLimit(3)
+                        }
+                        
+                    }
+                    .frame(maxHeight: height)
+                    .frame(maxWidth: (geometry.size.width)/CGFloat(viewModel.actions.count))
+                    .padding(8)
+                    .background(action.bgColor.value.opacity(0.8))
+                    .cornerRadius(10)
+                }).accentColor(.white)
+            }
+        }
+    }
     
     public var body: some View {
         
         GeometryReader { reader in
             HStack {
                 Spacer ()
-                HStack(alignment: .top, spacing: 5) {
-                    ForEach(viewModel.actions) { action in
-                        Button(action: {
-                            action.action()
-                        }, label: {
-                            VStack (alignment: .center){
-                                Image(systemName: action.iconName)
-                                    .font(.system(size: (height > 50) ? 30 : 20))
-                                    .padding()
-                                
-                                if viewModel.actions.count < 4 && height > 50 {
-                                    Text(action.title)
-                                        .font(.system(size: 12))
-                                        .multilineTextAlignment(.center)
-                                        .lineLimit(3)
-                                }
-                                
-                            }
-                            .frame(maxHeight: height)
-                            .frame(maxWidth: (reader.size.width)/CGFloat(viewModel.actions.count))
-                            .padding(8)
-                            .background(action.bgColor.value.opacity(0.8))
-                            .cornerRadius(10)
-                        }).accentColor(.white)
-                    }
-                }
+                self.makeView(reader)
             }.padding(1)
             
         }
