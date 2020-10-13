@@ -42,7 +42,7 @@ In Xcode got to `File -> Swift Packages -> Add Package Dependency` and paste int
 
 ### Usage:
 
-import the package in the file you would like to use it: `import SwiftUICharts`
+import the package in the file you would like to use it: `import SwipebleView`
 
 
 
