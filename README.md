@@ -35,7 +35,7 @@ Can be applied without list to every view.
 <!-- Installation-->
 ## Installation
 
-It requires iOS 13 and Xcode 11!
+It requires iOS 14 and Xcode 12!
 
 In Xcode got to `File -> Swift Packages -> Add Package Dependency` and paste inthe repo's url: `https://github.com/mroffmix/SwipebleView`
 
