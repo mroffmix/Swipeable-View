@@ -8,7 +8,9 @@
 import Combine
 import UIKit
 
+
 public protocol SwipeableViewModel: ObservableObject {
-    var dragOffset: CGSize {get set} // default CGSize.zero
-    var actions: EditActionsVM {get set} //  = EditActionsVM([])
+    var dragOffset: CGSize {get set}
+    var leftActions: EditActionsVM {get set}
+    var rightActions: EditActionsVM {get set} 
 }
