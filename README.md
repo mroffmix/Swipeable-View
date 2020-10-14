@@ -31,7 +31,7 @@
 Simple "editActionsForRowAt" functionality, written on SWIFTUI 
 Can be applied without list to every view. 
 
-![Swipeable View](https://github.com/mroffmix/SwipebleView/blob/main/Resources/sample.gif)
+![Swipeable View](https://github.com/mroffmix/SwipebleView/blob/main/Resources/WholeScreen.gif)
 <!-- Installation-->
 ## Installation
 
@@ -40,7 +40,7 @@ It requires iOS 13 and Xcode 11!
 In Xcode got to `File -> Swift Packages -> Add Package Dependency` and paste inthe repo's url: `https://github.com/mroffmix/SwipebleView`
 
 
-### Usage:
+### Import:
 
 import the package in the file you would like to use it: `import SwipebleView`
 
@@ -50,46 +50,65 @@ import the package in the file you would like to use it: `import SwipebleView`
 
 Added an example project, with **iOS** target: https://github.com/mroffmix/SwipebleViewExample
 
-
 <!-- USAGE EXAMPLES -->
-## Usage
+### Usage
+
+### Create array of actions
+
 ```swift
+var leftActions = [
+        Action(title: "Note", iconName: "pencil", bgColor: .note, action: {}),
+        Action(title: "Edit doc", iconName: "doc.text", bgColor: .edit, action: {}),
+        Action(title: "New doc", iconName: "doc.text.fill", bgColor: .done, action: {})
+    ]   
+var rightActions = [Action(title: "Delete", iconName: "trash", bgColor: .delete, action: {})]
+```
+### Create SwipeableView
+```swift
+SwipeableView(content: {
+  Text("Swipe to see actions")
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(Color.init(red: 0.85, green: 0.85, blue: 0.9))                    
+  },
+  leftActions: Example.leftActions,
+  rightActions: Example.rightActions,
+  rounded: false)
+  .frame(height: 90)
+```
 
+![Swipeable View](https://github.com/mroffmix/SwipebleView/blob/main/Resources/IndependedView.gif)
 
-SwipebleView(content: {
+### SwipeableView in container
+If you want to use your views in a container, as Table view, you have to ctreate 
+```swift
+var container = SwManager()
+```
+And put your SwipeableViews to this container
+```swift
+SwipeableView(content: {
+    // your view here 
     HStack {
         Spacer()
-        Text("Swipe left to see values")
+        Text("Swipe to see actions")
         Spacer()
     }
     .frame(maxHeight: .infinity)
-    .background(Color.blue)
-}, viewModel: example(count: $0))
-.frame(height: 100)
+    .background(Color.init(red: 0.9, green: 0.9, blue: 0.9))
+    .cornerRadius(10)
+   // end of your view
+},
+leftActions: Example.leftActions,
+rightActions: Example.rightActions,
+rounded: true,
+container: container)
+.frame(height: 140)
 ```
-Create view model with actions (using SwipebleViewModel protocol)
+Views behaviour in a container
 
-```swift
-class example: SwipebleViewModel {
-    var count: Int
-    @Published var dragOffset: CGSize = CGSize.zero
-    @Published var actions: EditActionsVM
-    
-    init(count: Int) {
-        actions =  EditActionsVM([
-            Action(title: "Delete", iconName: "trash", bgColor: .delete, action: {/* place your action here */}),
-            Action(title: "Edit existing document", iconName: "doc.text", bgColor: .edit, action: {/* place your action here */}),
-            Action(title: "New doc", iconName: "doc.text.fill", bgColor: .delete, action: {/* place your action here */}),
-            Action(title: "Create", iconName: "pencil.circle", bgColor: .done, action: {/* place your action here */})
-        ], maxActions: count)
-        self.count = count
-    }
-}
-
-```
+![Swipeable View](https://github.com/mroffmix/SwipebleView/blob/main/Resources/ViewsInAContainer.gif)
 
 <!-- ROADMAP -->
-## Roadmap
+### Roadmap
 
 See the [open issues](https://github.com/github_username/repo_name/issues) for a list of proposed features (and known issues).
 
