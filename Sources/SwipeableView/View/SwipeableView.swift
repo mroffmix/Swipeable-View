@@ -1,6 +1,6 @@
 //
 //  SwipeableView.swift
-//  SwipeableView
+//
 //
 //  Created by Ilya on 10.10.20.
 //
@@ -14,23 +14,25 @@ public enum ViewState: CaseIterable {
 }
 
 public struct SwipeableView<Content: View>: View {
-    
     @Environment(\.colorScheme) var colorScheme
-    @State var dragOffset: CGSize = .zero
-    @State private var state: ViewState = .center
+    
     var rounded: Bool
     var leftActions: EditActionsVM
     var rightActions: EditActionsVM
+    @ObservedObject var viewModel: SWViewModel
     
     let content: Content
     
-    public init(@ViewBuilder content: () -> Content, leftActions: [Action], rightActions: [Action], rounded: Bool = false) {
+    public init(@ViewBuilder content: () -> Content, leftActions: [Action], rightActions: [Action], rounded: Bool = false, container: SwManager? = nil ) {
         
         self.content = content()
         self.leftActions = EditActionsVM(leftActions, maxActions: leftActions.count)
         self.rightActions = EditActionsVM(rightActions, maxActions: rightActions.count)
         self.rounded = rounded
-        self.dragOffset = .zero
+        
+        viewModel = SWViewModel(state: .center, size: .zero)
+        container?.addView(viewModel)
+        
     }
     
     private func makeView(_ geometry: GeometryProxy) -> some View {
@@ -40,12 +42,23 @@ public struct SwipeableView<Content: View>: View {
     public var body: some View {
 
             ZStack {
-                switch state {
+                
+                switch viewModel.state {
                 case .left:
-                    EditActions(viewModel: leftActions, offset: $dragOffset, state: $state, side: .left, rounded: rounded)
+                    
+                    EditActions(viewModel: leftActions,
+                                offset: .init(get: {viewModel.dragOffset}, set: {viewModel.dragOffset = $0}),
+                                state: .init(get: {viewModel.state}, set: {viewModel.state = $0}),
+                                side: .left,
+                                rounded: rounded)
                     
                 case .right :
-                    EditActions(viewModel: rightActions, offset: $dragOffset, state: $state, side: .right, rounded: rounded)
+                    
+                    EditActions(viewModel: rightActions,
+                                offset: .init(get: {viewModel.dragOffset}, set: {viewModel.dragOffset = $0}),
+                                state: .init(get: {viewModel.state}, set: {viewModel.state = $0}),
+                                side: .right,
+                                rounded: rounded)
                 case .center:
                     EmptyView()
                     
@@ -54,12 +67,12 @@ public struct SwipeableView<Content: View>: View {
                 GeometryReader { reader in
                     self.makeView(reader)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .offset(x: dragOffset.width)
+                        .offset(x: viewModel.dragOffset.width)
                 }
-                .onTapGesture(count: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/, perform: {
+                .onTapGesture(count: 1, perform: {
                     withAnimation {
-                        dragOffset = CGSize.zero
-                        state = .center
+                        viewModel.dragOffset = CGSize.zero
+                        viewModel.state = .center
                     }
                 })
                 
@@ -70,39 +83,39 @@ public struct SwipeableView<Content: View>: View {
                             withAnimation {
                                 
                                 #if DEBUG
-                                print(dragOffset)
+                                print(viewModel.dragOffset)
                                 #endif
                                 
                                 if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
                                     // left
-                                    if state == .center {
+                                    if viewModel.state == .center {
                                         var offset = (CGFloat(min(4, leftActions.actions.count)) * -80)
                                         if rounded {
                                             offset -= CGFloat(min(4, leftActions.actions.count)) * 5 
                                         }
                                                       
-                                        dragOffset = (CGSize.init(width: offset, height: 0))
-                                        state = .left
+                                        viewModel.dragOffset = CGSize.init(width: offset, height: 0)
+                                        viewModel.state = .left
                                     } else {
-                                        dragOffset = CGSize.zero
-                                        state = .center
+                                        viewModel.dragOffset = CGSize.zero
+                                        viewModel.state = .center
                                     }
                                     
                                     
                                 } else if value.translation.width > 0 && value.translation.height > -30 && value.translation.height < 30 {
                                     // right
-                                    if state == .center {
+                                    if viewModel.state == .center {
                                         
                                         var offset = (CGFloat(min(4, rightActions.actions.count)) * +80)
                                         if rounded {
                                             offset += CGFloat(min(4, rightActions.actions.count)) * 5
                                         }
                                         
-                                        dragOffset = (CGSize.init(width: offset, height: 0))
-                                        state = .right
+                                        viewModel.dragOffset = (CGSize.init(width: offset, height: 0))
+                                        viewModel.state = .right
                                     } else {
-                                        dragOffset = CGSize.zero
-                                        state = .center
+                                        viewModel.dragOffset = CGSize.zero
+                                        viewModel.state = .center
                                     }
                                     
                                 }
@@ -113,12 +126,6 @@ public struct SwipeableView<Content: View>: View {
     }
 }
 
-class example: SwipeableViewModel {
-    @Published var leftActions: EditActionsVM = EditActionsVM([], maxActions: 4)
-    @Published var rightActions: EditActionsVM = EditActionsVM([], maxActions: 4)
-    @Published var dragOffset: CGSize = CGSize.zero
-    
-}
 @available(iOS 14.0, *)
 struct SwipebleView_Previews: PreviewProvider {
     static var previews: some View {

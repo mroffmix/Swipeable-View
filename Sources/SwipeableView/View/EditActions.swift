@@ -43,16 +43,11 @@ public struct EditActions: View {
                         
                         if viewModel.actions.count < 4 && geometry.size.height > 50 {
                             
-                                Text(action.title)
-                                    .font(.system(size: 10, weight: .semibold))
-                                    .multilineTextAlignment(.center)
-                                    .lineLimit(3)
-                                    
-                                
-                            
-                            
+                            Text(action.title)
+                                .font(.system(size: 10, weight: .semibold))
+                                .multilineTextAlignment(.center)
+                                .lineLimit(3)
                         }
-                        
                         
                     }
                     .padding()
