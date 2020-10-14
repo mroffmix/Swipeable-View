@@ -66,9 +66,9 @@ var rightActions = [Action(title: "Delete", iconName: "trash", bgColor: .delete,
 ### Create SwipeableView
 ```swift
 SwipeableView(content: {
-  Text("Swipe to see actions")
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(Color.init(red: 0.85, green: 0.85, blue: 0.9))                    
+
+  // your view content here
+  
   },
   leftActions: Example.leftActions,
   rightActions: Example.rightActions,
@@ -86,16 +86,9 @@ var container = SwManager()
 And put your SwipeableViews to this container
 ```swift
 SwipeableView(content: {
-    // your view here 
-    HStack {
-        Spacer()
-        Text("Swipe to see actions")
-        Spacer()
-    }
-    .frame(maxHeight: .infinity)
-    .background(Color.init(red: 0.9, green: 0.9, blue: 0.9))
-    .cornerRadius(10)
-   // end of your view
+
+  // your view here 
+
 },
 leftActions: Example.leftActions,
 rightActions: Example.rightActions,
@@ -110,7 +103,7 @@ Views behaviour in a container
 <!-- ROADMAP -->
 ### Roadmap
 
-See the [open issues](https://github.com/github_username/repo_name/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/mroffmix/Swipeable-View/issues) for a list of proposed features (and known issues).
 
 
 
