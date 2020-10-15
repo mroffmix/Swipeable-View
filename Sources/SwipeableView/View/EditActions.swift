@@ -83,11 +83,11 @@ public struct EditActions: View {
         
         GeometryReader { reader in
             HStack {
-                if side == .left { Spacer () }
+                if self.side == .left { Spacer () }
                 
                 self.makeView(reader)
                 
-                if side == .right { Spacer () }
+                if self.side == .right { Spacer () }
             }
             
         }

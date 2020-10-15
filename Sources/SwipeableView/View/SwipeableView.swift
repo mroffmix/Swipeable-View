@@ -71,7 +71,7 @@ public struct SwipeableView<Content: View>: View {
             GeometryReader { reader in
                 self.makeView(reader)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .offset(x: viewModel.dragOffset.width)
+                    .offset(x: self.viewModel.dragOffset.width)
             }
             .onTapGesture(count: 1, perform: {
                 withAnimation {
@@ -94,7 +94,7 @@ public struct SwipeableView<Content: View>: View {
                                 // left
                                 if self.viewModel.state == .center {
                                     var offset = (CGFloat(min(4, self.leftActions.actions.count)) * -80)
-                                    if rounded {
+                                    if self.rounded {
                                         offset -= CGFloat(min(4, self.leftActions.actions.count)) * 5
                                     }
                                     
@@ -111,7 +111,7 @@ public struct SwipeableView<Content: View>: View {
                                 if self.viewModel.state == .center {
                                     
                                     var offset = (CGFloat(min(4, self.rightActions.actions.count)) * +80)
-                                    if rounded {
+                                    if self.rounded {
                                         offset += CGFloat(min(4, self.rightActions.actions.count)) * 5
                                     }
                                     
