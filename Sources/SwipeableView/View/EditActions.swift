@@ -22,6 +22,33 @@ public struct EditActions: View {
     @State var rounded: Bool
     
     
+    fileprivate func makeActionView(_ action: Action, height: CGFloat) -> some View {
+        return VStack (alignment: .center, spacing: 0){
+            #if os(macOS)
+            Image(action.iconName)
+                .font(.system(size: 20))
+                .padding(.bottom, 8)
+            #endif
+            #if os(iOS)
+            Image(systemName: action.iconName)
+                .font(.system(size: 20))
+                .padding(.bottom, 8)
+            #endif
+            if viewModel.actions.count < 4 && height > 50 {
+                
+                Text(action.title)
+                    .font(.system(size: 10, weight: .semibold))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(3)
+            }
+            
+        }
+        .padding()
+        .frame(width: 80, height: height)
+        .background(action.bgColor.value.saturation(0.8))
+        .cornerRadius(rounded ? 10 : 0)
+    }
+    
     private func makeView(_ geometry: GeometryProxy) -> some View {
         #if DEBUG
         print("EditActions: = \(geometry.size.width) , \(geometry.size.height)")
@@ -36,26 +63,18 @@ public struct EditActions: View {
                         state = .center
                     }
                 }, label: {
-                    VStack (alignment: .center, spacing: 0){
-                        Image(systemName: action.iconName)
-                            .font(.system(size: 20))
-                            .padding(.bottom, 8)
-                        
-                        if viewModel.actions.count < 4 && geometry.size.height > 50 {
-                            
-                            Text(action.title)
-                                .font(.system(size: 10, weight: .semibold))
-                                .multilineTextAlignment(.center)
-                                .lineLimit(3)
-                        }
-                        
-                    }
-                    .padding()
-                    .frame(width: 80, height: geometry.size.height)
-                    .background(action.bgColor.value.saturation(0.8))
-                    .cornerRadius(rounded ? 10 : 0)
+                    #if os(iOS)
+                    makeActionView(action, height: geometry.size.height)
+                        .accentColor(.white)
+                    #endif
+                    
+                    #if os(macOS)
+                    makeActionView(action, height: geometry.size.height)
+                        .colorMultiply(.white)
+                    #endif
+
+                    
                 })
-                .accentColor(.white)
             }
         }
     }
