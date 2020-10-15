@@ -59,17 +59,17 @@ public struct EditActions: View {
                 Button(action: {
                     action.action()
                     withAnimation {
-                        offset = .zero
-                        state = .center
+                        self.offset = .zero
+                        self.state = .center
                     }
                 }, label: {
                     #if os(iOS)
-                    makeActionView(action, height: geometry.size.height)
+                    self.makeActionView(action, height: geometry.size.height)
                         .accentColor(.white)
                     #endif
                     
                     #if os(macOS)
-                    makeActionView(action, height: geometry.size.height)
+                    self.makeActionView(action, height: geometry.size.height)
                         .colorMultiply(.white)
                     #endif
 
@@ -83,15 +83,11 @@ public struct EditActions: View {
         
         GeometryReader { reader in
             HStack {
-                switch side {
-                case .left:
-                    Spacer ()
-                    self.makeView(reader)
-                    
-                case .right:
-                    self.makeView(reader)
-                    Spacer ()
-                }
+                if side == .left { Spacer () }
+                
+                self.makeView(reader)
+                
+                if side == .right { Spacer () }
             }
             
         }

@@ -44,16 +44,16 @@ public struct SwipeableView<Content: View>: View {
         case .left:
             
             return AnyView(EditActions(viewModel: leftActions,
-                                       offset: .init(get: {viewModel.dragOffset}, set: {viewModel.dragOffset = $0}),
-                                       state: .init(get: {viewModel.state}, set: {viewModel.state = $0}),
+                                       offset: .init(get: {self.viewModel.dragOffset}, set: {self.viewModel.dragOffset = $0}),
+                                       state: .init(get: {self.viewModel.state}, set: {self.viewModel.state = $0}),
                                        side: .left,
                                        rounded: rounded))
             
         case .right :
             
             return AnyView(EditActions(viewModel: rightActions,
-                                       offset: .init(get: {viewModel.dragOffset}, set: {viewModel.dragOffset = $0}),
-                                       state: .init(get: {viewModel.state}, set: {viewModel.state = $0}),
+                                       offset: .init(get: {self.viewModel.dragOffset}, set: {self.viewModel.dragOffset = $0}),
+                                       state: .init(get: {self.viewModel.state}, set: {self.viewModel.state = $0}),
                                        side: .right,
                                        rounded: rounded))
         case .center:
@@ -75,8 +75,8 @@ public struct SwipeableView<Content: View>: View {
             }
             .onTapGesture(count: 1, perform: {
                 withAnimation {
-                    viewModel.dragOffset = CGSize.zero
-                    viewModel.state = .center
+                    self.viewModel.dragOffset = CGSize.zero
+                    self.viewModel.state = .center
                 }
             })
             
@@ -87,39 +87,39 @@ public struct SwipeableView<Content: View>: View {
                         withAnimation {
                             
                             #if DEBUG
-                            print(viewModel.dragOffset)
+                            // print(viewModel.dragOffset)
                             #endif
                             
                             if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
                                 // left
-                                if viewModel.state == .center {
-                                    var offset = (CGFloat(min(4, leftActions.actions.count)) * -80)
+                                if self.viewModel.state == .center {
+                                    var offset = (CGFloat(min(4, self.leftActions.actions.count)) * -80)
                                     if rounded {
-                                        offset -= CGFloat(min(4, leftActions.actions.count)) * 5
+                                        offset -= CGFloat(min(4, self.leftActions.actions.count)) * 5
                                     }
                                     
-                                    viewModel.dragOffset = CGSize.init(width: offset, height: 0)
-                                    viewModel.state = .left
+                                    self.viewModel.dragOffset = CGSize.init(width: offset, height: 0)
+                                    self.viewModel.state = .left
                                 } else {
-                                    viewModel.dragOffset = CGSize.zero
-                                    viewModel.state = .center
+                                    self.viewModel.dragOffset = CGSize.zero
+                                    self.viewModel.state = .center
                                 }
                                 
                                 
                             } else if value.translation.width > 0 && value.translation.height > -30 && value.translation.height < 30 {
                                 // right
-                                if viewModel.state == .center {
+                                if self.viewModel.state == .center {
                                     
-                                    var offset = (CGFloat(min(4, rightActions.actions.count)) * +80)
+                                    var offset = (CGFloat(min(4, self.rightActions.actions.count)) * +80)
                                     if rounded {
-                                        offset += CGFloat(min(4, rightActions.actions.count)) * 5
+                                        offset += CGFloat(min(4, self.rightActions.actions.count)) * 5
                                     }
                                     
-                                    viewModel.dragOffset = (CGSize.init(width: offset, height: 0))
-                                    viewModel.state = .right
+                                    self.viewModel.dragOffset = (CGSize.init(width: offset, height: 0))
+                                    self.viewModel.state = .right
                                 } else {
-                                    viewModel.dragOffset = CGSize.zero
-                                    viewModel.state = .center
+                                    self.viewModel.dragOffset = CGSize.zero
+                                    self.viewModel.state = .center
                                 }
                                 
                             }
