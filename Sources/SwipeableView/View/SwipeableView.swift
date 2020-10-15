@@ -39,90 +39,94 @@ public struct SwipeableView<Content: View>: View {
         return content
     }
     
+    private func makeActions() -> AnyView {
+        switch viewModel.state {
+        case .left:
+            
+            return AnyView(EditActions(viewModel: leftActions,
+                                       offset: .init(get: {viewModel.dragOffset}, set: {viewModel.dragOffset = $0}),
+                                       state: .init(get: {viewModel.state}, set: {viewModel.state = $0}),
+                                       side: .left,
+                                       rounded: rounded))
+            
+        case .right :
+            
+            return AnyView(EditActions(viewModel: rightActions,
+                                       offset: .init(get: {viewModel.dragOffset}, set: {viewModel.dragOffset = $0}),
+                                       state: .init(get: {viewModel.state}, set: {viewModel.state = $0}),
+                                       side: .right,
+                                       rounded: rounded))
+        case .center:
+            return AnyView(EmptyView())
+            
+        }
+    }
+    
     public var body: some View {
-
-            ZStack {
-                
-                switch viewModel.state {
-                case .left:
-                    
-                    EditActions(viewModel: leftActions,
-                                offset: .init(get: {viewModel.dragOffset}, set: {viewModel.dragOffset = $0}),
-                                state: .init(get: {viewModel.state}, set: {viewModel.state = $0}),
-                                side: .left,
-                                rounded: rounded)
-                    
-                case .right :
-                    
-                    EditActions(viewModel: rightActions,
-                                offset: .init(get: {viewModel.dragOffset}, set: {viewModel.dragOffset = $0}),
-                                state: .init(get: {viewModel.state}, set: {viewModel.state = $0}),
-                                side: .right,
-                                rounded: rounded)
-                case .center:
-                    EmptyView()
-                    
+        
+        ZStack {
+            
+            makeActions()
+            
+            GeometryReader { reader in
+                self.makeView(reader)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .offset(x: viewModel.dragOffset.width)
+            }
+            .onTapGesture(count: 1, perform: {
+                withAnimation {
+                    viewModel.dragOffset = CGSize.zero
+                    viewModel.state = .center
                 }
-                
-                GeometryReader { reader in
-                    self.makeView(reader)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .offset(x: viewModel.dragOffset.width)
-                }
-                .onTapGesture(count: 1, perform: {
-                    withAnimation {
-                        viewModel.dragOffset = CGSize.zero
-                        viewModel.state = .center
-                    }
-                })
-                
-                .gesture(
-                    DragGesture(minimumDistance: 1.0, coordinateSpace: .local)
-                        .onEnded { value in
+            })
+            
+            .gesture(
+                DragGesture(minimumDistance: 1.0, coordinateSpace: .local)
+                    .onEnded { value in
+                        
+                        withAnimation {
                             
-                            withAnimation {
-                                
-                                #if DEBUG
-                                print(viewModel.dragOffset)
-                                #endif
-                                
-                                if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
-                                    // left
-                                    if viewModel.state == .center {
-                                        var offset = (CGFloat(min(4, leftActions.actions.count)) * -80)
-                                        if rounded {
-                                            offset -= CGFloat(min(4, leftActions.actions.count)) * 5 
-                                        }
-                                                      
-                                        viewModel.dragOffset = CGSize.init(width: offset, height: 0)
-                                        viewModel.state = .left
-                                    } else {
-                                        viewModel.dragOffset = CGSize.zero
-                                        viewModel.state = .center
+                            #if DEBUG
+                            print(viewModel.dragOffset)
+                            #endif
+                            
+                            if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
+                                // left
+                                if viewModel.state == .center {
+                                    var offset = (CGFloat(min(4, leftActions.actions.count)) * -80)
+                                    if rounded {
+                                        offset -= CGFloat(min(4, leftActions.actions.count)) * 5
                                     }
                                     
-                                    
-                                } else if value.translation.width > 0 && value.translation.height > -30 && value.translation.height < 30 {
-                                    // right
-                                    if viewModel.state == .center {
-                                        
-                                        var offset = (CGFloat(min(4, rightActions.actions.count)) * +80)
-                                        if rounded {
-                                            offset += CGFloat(min(4, rightActions.actions.count)) * 5
-                                        }
-                                        
-                                        viewModel.dragOffset = (CGSize.init(width: offset, height: 0))
-                                        viewModel.state = .right
-                                    } else {
-                                        viewModel.dragOffset = CGSize.zero
-                                        viewModel.state = .center
-                                    }
-                                    
+                                    viewModel.dragOffset = CGSize.init(width: offset, height: 0)
+                                    viewModel.state = .left
+                                } else {
+                                    viewModel.dragOffset = CGSize.zero
+                                    viewModel.state = .center
                                 }
+                                
+                                
+                            } else if value.translation.width > 0 && value.translation.height > -30 && value.translation.height < 30 {
+                                // right
+                                if viewModel.state == .center {
+                                    
+                                    var offset = (CGFloat(min(4, rightActions.actions.count)) * +80)
+                                    if rounded {
+                                        offset += CGFloat(min(4, rightActions.actions.count)) * 5
+                                    }
+                                    
+                                    viewModel.dragOffset = (CGSize.init(width: offset, height: 0))
+                                    viewModel.state = .right
+                                } else {
+                                    viewModel.dragOffset = CGSize.zero
+                                    viewModel.state = .center
+                                }
+                                
                             }
                         }
-                )
-            }
+                    }
+            )
+        }
     }
 }
 
@@ -133,17 +137,22 @@ struct SwipebleView_Previews: PreviewProvider {
             VStack {
                 Spacer()
                 SwipeableView(content: {
-                    HStack {
-                        Spacer()
+                    GroupBox {
                         Text("View content")
-                        Spacer()
-                    }.padding()
-                    .background(Color.blue)
-                    
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
                 },
-                leftActions:[],
-                rightActions: []
-                )
+                leftActions:[
+                    Action(title: "Note", iconName: "pencil", bgColor: .note, action: {}),
+                    Action(title: "Edit doc", iconName: "doc.text", bgColor: .edit, action: {}),
+                    Action(title: "New doc", iconName: "doc.text.fill", bgColor: .done, action: {})
+                ],
+                rightActions: [
+                    Action(title: "Note", iconName: "pencil", bgColor: .note, action: {}),
+                    Action(title: "Edit doc", iconName: "doc.text", bgColor: .edit, action: {})
+                ],
+                rounded: true
+                ).frame(height: 90)
                 
                 Spacer()
             }
