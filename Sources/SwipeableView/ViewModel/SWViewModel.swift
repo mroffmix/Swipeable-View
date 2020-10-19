@@ -18,7 +18,9 @@ public class SWViewModel: ObservableObject {
         }
     }
     
+    @Published var onChangeSwipe: OnChangeSwipe = .noChange
     @Published var dragOffset: CGSize
+    
     let stateDidChange = PassthroughSubject<SWViewModel, Never>()
     
     init(state: ViewState, size: CGSize) {
@@ -28,10 +30,19 @@ public class SWViewModel: ObservableObject {
     
     public func goToCenter(){
         DispatchQueue.main.async {
+        
             withAnimation {
-                self.state = .center
+              
                 self.dragOffset = .zero
             }
+            
+            withAnimation {
+                self.state = .center
+                self.onChangeSwipe = .noChange
+               
+            }
         }
+          
+        
     }
 }

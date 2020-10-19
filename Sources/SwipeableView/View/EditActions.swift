@@ -18,6 +18,7 @@ public struct EditActions: View {
     @ObservedObject var viewModel: EditActionsVM
     @Binding var offset: CGSize
     @Binding var state: ViewState
+    @Binding var onChangeSwipe: OnChangeSwipe
     @State var side: ActionSide
     @State var rounded: Bool
     
@@ -40,28 +41,47 @@ public struct EditActions: View {
                     .font(.system(size: 10, weight: .semibold))
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
+                    .frame(width: 80)
             }
-            
         }
         .padding()
-        .frame(width: 80, height: height)
+        .frame(width: getWidth(), height: height)
         .background(action.bgColor.value.saturation(0.8))
         .cornerRadius(rounded ? 10 : 0)
+        
+    }
+    private func getWidth() -> CGFloat {
+        let width = CGFloat(abs(offset.width) / CGFloat(viewModel.actions.count))
+        
+        if width < 80  {
+            return 80
+        } else {
+            return rounded ? width - 5 : width
+        }
     }
     
     private func makeView(_ geometry: GeometryProxy) -> some View {
         #if DEBUG
-        print("EditActions: = \(geometry.size.width) , \(geometry.size.height)")
+        //print("EditActions: = \(geometry.size.width) , \(geometry.size.height)")
         #endif
         
         return HStack(alignment: .center, spacing: rounded ? 5 : 0) {
             ForEach(viewModel.actions) { action in
                 Button(action: {
                     action.action()
-                    withAnimation {
-                        self.offset = .zero
+                    
+                    withAnimation(.easeOut) {
+                        self.offset = CGSize.zero
                         self.state = .center
                     }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        withAnimation(Animation.easeOut) {
+                            if self.state == .center {
+                                self.onChangeSwipe = .noChange
+                            }
+                        }
+                    }
+                    
                 }, label: {
                     #if os(iOS)
                     self.makeActionView(action, height: geometry.size.height)
@@ -105,20 +125,20 @@ struct EditActions_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), offset: .constant(.zero), state: .constant(.center), side: .right, rounded: false)
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), offset: .constant(.zero), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .right, rounded: false)
                 .previewLayout(.fixed(width: 450, height: 400))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), offset: .constant(.zero), state: .constant(.center), side: .left, rounded: false)
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), offset: .constant(.zero), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .left, rounded: false)
                 .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 2), offset: .constant(.zero), state: .constant(.center), side: .left, rounded: false)
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 2), offset: .constant(.zero), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .left, rounded: false)
                 .previewLayout(.fixed(width: 450, height: 150))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 3), offset: .constant(.zero), state: .constant(.center), side: .right, rounded: true)
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 3), offset: .constant(.zero), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .right, rounded: true)
                 .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), offset: .constant(.zero), state: .constant(.center), side: .left, rounded: true)
-                .previewLayout(.fixed(width: 550, height: 280))
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), offset: .constant(.zero), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .left, rounded: true)
+                .previewLayout(.fixed(width: 550, height: 180))
             
             
         }

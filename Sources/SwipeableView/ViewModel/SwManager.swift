@@ -27,7 +27,7 @@ public class SwManager: ObservableObject {
         view.stateDidChange.sink(receiveValue: { vm in
             if self.views.count != 0 {
                 #if DEBUG
-                print("swiped = \(vm.id.uuidString)")
+                //print("swiped = \(vm.id.uuidString)")
                 #endif
                 self.views.forEach {
                     if vm.id != $0.id && $0.state != .center{

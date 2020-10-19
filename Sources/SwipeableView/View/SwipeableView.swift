@@ -13,6 +13,11 @@ public enum ViewState: CaseIterable {
     case center
 }
 
+enum OnChangeSwipe {
+    case leftStarted
+    case rightStarted
+    case noChange
+}
 public struct SwipeableView<Content: View>: View {
     @Environment(\.colorScheme) var colorScheme
     
@@ -20,6 +25,8 @@ public struct SwipeableView<Content: View>: View {
     var leftActions: EditActionsVM
     var rightActions: EditActionsVM
     @ObservedObject var viewModel: SWViewModel
+    
+    //@State private var onChangeSwipe: OnChangeSwipe = .noChange
     
     let content: Content
     
@@ -40,92 +47,126 @@ public struct SwipeableView<Content: View>: View {
     }
     
     private func makeActions() -> AnyView {
-        switch viewModel.state {
-        case .left:
+        switch viewModel.onChangeSwipe {
+        case .leftStarted:
             
             return AnyView(EditActions(viewModel: leftActions,
                                        offset: .init(get: {self.viewModel.dragOffset}, set: {self.viewModel.dragOffset = $0}),
                                        state: .init(get: {self.viewModel.state}, set: {self.viewModel.state = $0}),
+                                       onChangeSwipe: .init(get: {self.viewModel.onChangeSwipe}, set: {self.viewModel.onChangeSwipe = $0}),
                                        side: .left,
-                                       rounded: rounded))
+                                       rounded: rounded)
+                            .transition(.slide))
+                
             
-        case .right :
+        case .rightStarted :
             
             return AnyView(EditActions(viewModel: rightActions,
                                        offset: .init(get: {self.viewModel.dragOffset}, set: {self.viewModel.dragOffset = $0}),
                                        state: .init(get: {self.viewModel.state}, set: {self.viewModel.state = $0}),
+                                       onChangeSwipe: .init(get: {self.viewModel.onChangeSwipe}, set: {self.viewModel.onChangeSwipe = $0}),
                                        side: .right,
-                                       rounded: rounded))
-        case .center:
+                                       rounded: rounded)
+                            .transition(.slide))
+                    
+        case .noChange:
             return AnyView(EmptyView())
             
         }
     }
     
+    private func toCenterWithAnimation() {
+        withAnimation(.easeOut) {
+            self.viewModel.dragOffset = CGSize.zero
+            self.viewModel.state = .center
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            withAnimation(Animation.easeOut) {
+                if self.viewModel.state == .center {
+                    self.viewModel.onChangeSwipe = .noChange
+                }
+            }
+        }
+    }
+    
+    private func onChanged(value: DragGesture.Value){
+
+        if self.viewModel.state == .center {
+            if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
+                self.viewModel.onChangeSwipe = .leftStarted
+                self.viewModel.dragOffset.width = value.translation.width
+            } else if self.viewModel.dragOffset.width >= 0 && value.translation.height > -30 && value.translation.height < 30{
+                
+                self.viewModel.onChangeSwipe = .rightStarted
+                self.viewModel.dragOffset.width = value.translation.width
+            }
+        } else {
+           
+            self.viewModel.dragOffset.width =  self.viewModel.dragOffset.width + ((value.translation.width < 0) ? -2 : 2)
+        }
+        
+    }
+    
+
+    
+    private func onEnded(value: DragGesture.Value){
+        
+        #if DEBUG
+        // print(viewModel.dragOffset)
+        #endif
+        
+        if self.viewModel.dragOffset.width < 0 {
+            // left
+            if self.viewModel.state == .center && value.translation.width < -50 {
+                
+                var offset = (CGFloat(min(4, self.leftActions.actions.count)) * -80)
+                
+                if self.rounded {
+                    offset -= CGFloat(min(4, self.leftActions.actions.count)) * 5
+                }
+                withAnimation(.easeOut) {
+                    self.viewModel.dragOffset = CGSize.init(width: offset, height: 0)
+                    self.viewModel.state = .left
+                }
+                
+            } else {
+                self.toCenterWithAnimation()
+            }
+            
+            
+        } else if self.viewModel.dragOffset.width > 0 {
+            // right
+            if self.viewModel.state == .center && value.translation.width > 50{
+                
+                var offset = (CGFloat(min(4, self.rightActions.actions.count)) * +80)
+                if self.rounded {
+                    offset += CGFloat(min(4, self.rightActions.actions.count)) * 5
+                }
+                withAnimation(.easeOut) {
+                    self.viewModel.dragOffset = (CGSize.init(width: offset, height: 0))
+                    self.viewModel.state = .right
+                }
+            } else {
+                self.toCenterWithAnimation()
+            }
+            
+        }
+        
+    }
+    
     public var body: some View {
         
         ZStack {
-            
             makeActions()
-            
             GeometryReader { reader in
                 self.makeView(reader)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .offset(x: self.viewModel.dragOffset.width)
+                    
+                    .onTapGesture(count: 1, perform: { toCenterWithAnimation()})
+                    .gesture( DragGesture(minimumDistance: 10.0, coordinateSpace: .local).onChanged(onChanged(value:)).onEnded(onEnded(value:)))
             }
-            .onTapGesture(count: 1, perform: {
-                withAnimation {
-                    self.viewModel.dragOffset = CGSize.zero
-                    self.viewModel.state = .center
-                }
-            })
             
-            .gesture(
-                DragGesture(minimumDistance: 1.0, coordinateSpace: .local)
-                    .onEnded { value in
-                        
-                        withAnimation {
-                            
-                            #if DEBUG
-                            // print(viewModel.dragOffset)
-                            #endif
-                            
-                            if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
-                                // left
-                                if self.viewModel.state == .center {
-                                    var offset = (CGFloat(min(4, self.leftActions.actions.count)) * -80)
-                                    if self.rounded {
-                                        offset -= CGFloat(min(4, self.leftActions.actions.count)) * 5
-                                    }
-                                    
-                                    self.viewModel.dragOffset = CGSize.init(width: offset, height: 0)
-                                    self.viewModel.state = .left
-                                } else {
-                                    self.viewModel.dragOffset = CGSize.zero
-                                    self.viewModel.state = .center
-                                }
-                                
-                                
-                            } else if value.translation.width > 0 && value.translation.height > -30 && value.translation.height < 30 {
-                                // right
-                                if self.viewModel.state == .center {
-                                    
-                                    var offset = (CGFloat(min(4, self.rightActions.actions.count)) * +80)
-                                    if self.rounded {
-                                        offset += CGFloat(min(4, self.rightActions.actions.count)) * 5
-                                    }
-                                    
-                                    self.viewModel.dragOffset = (CGSize.init(width: offset, height: 0))
-                                    self.viewModel.state = .right
-                                } else {
-                                    self.viewModel.dragOffset = CGSize.zero
-                                    self.viewModel.state = .center
-                                }
-                                
-                            }
-                        }
-                    }
-            )
         }
     }
 }
