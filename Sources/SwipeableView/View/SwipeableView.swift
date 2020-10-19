@@ -163,8 +163,8 @@ public struct SwipeableView<Content: View>: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .offset(x: self.viewModel.dragOffset.width)
                     
-                    .onTapGesture(count: 1, perform: { toCenterWithAnimation()})
-                    .gesture( DragGesture(minimumDistance: 10.0, coordinateSpace: .local).onChanged(onChanged(value:)).onEnded(onEnded(value:)))
+                    .onTapGesture(count: 1, perform: { self.toCenterWithAnimation()})
+                    .gesture( DragGesture(minimumDistance: 10.0, coordinateSpace: .local).onChanged(self.onChanged(value:)).onEnded(self.onEnded(value:)))
             }
             
         }
