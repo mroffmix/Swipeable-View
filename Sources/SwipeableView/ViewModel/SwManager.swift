@@ -23,16 +23,20 @@ public class SwManager: ObservableObject {
     
     public func addView(_ view: SWViewModel) {
         views.append(view)
-        
         view.stateDidChange.sink(receiveValue: { vm in
             if self.views.count != 0 {
-                #if DEBUG
-                //print("swiped = \(vm.id.uuidString)")
-                #endif
                 self.views.forEach {
                     if vm.id != $0.id && $0.state != .center{
                         $0.goToCenter()
                     }
+                }
+            }
+        }).store(in: &subscriptions)
+        
+        view.otherActionTapped.sink(receiveValue: { _ in
+            if self.views.count != 0 {
+                self.views.forEach {
+                    $0.goToCenter()
                 }
             }
         }).store(in: &subscriptions)
