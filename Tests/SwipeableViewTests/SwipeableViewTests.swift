@@ -8,7 +8,7 @@ final class swipableviewTests: XCTestCase {
     var subscriptions = Set<AnyCancellable>()
     
     func testAction() {
-        let action = Action(title: "Foo", iconName: "trash", bgColor: .delete, action: { print("Foo") })
+        let action = Action(title: "Foo", iconName: "trash", bgColor: .red, action: { print("Foo") })
         
         XCTAssertNotNil(action)
         
@@ -16,7 +16,7 @@ final class swipableviewTests: XCTestCase {
         
         XCTAssert(action.title == "Foo")
         XCTAssert(action.iconName == "trash")
-        XCTAssert(action.bgColor == .delete)
+        XCTAssert(action.bgColor == .red)
         
     }
     
@@ -36,7 +36,8 @@ final class swipableviewTests: XCTestCase {
         model.state = .right
         XCTAssert(model.state == .right)
 
-       // model.goToCenter()
+        model.goToCenter()
+        XCTAssert(model.state == .center)
         
     }
     

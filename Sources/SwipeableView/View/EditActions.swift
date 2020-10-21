@@ -31,13 +31,17 @@ public struct EditActions: View {
                 .padding(.bottom, 8)
             #endif
             #if os(iOS)
-            Image(systemName: action.iconName)
-                .font(.system(size: 20))
-                .padding(.bottom, 8)
+            if getWidth() > 35 {
+                Image(systemName: action.iconName)
+                    .font(.system(size: 20))
+                    .padding(.bottom, 8)
+                    .opacity(getWidth() < 30 ? 0.1 : 1 )
+            }
+            
             #endif
             if viewModel.actions.count < 4 && height > 50 {
                 
-                Text(action.title)
+                Text(getWidth() > 70 ? action.title : "")
                     .font(.system(size: 10, weight: .semibold))
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
@@ -46,17 +50,36 @@ public struct EditActions: View {
         }
         .padding()
         .frame(width: getWidth(), height: height)
-        .background(action.bgColor.value.saturation(0.8))
+        .background(action.bgColor.opacity(getWidth() < 30 ? 0.1 : 1 ))
         .cornerRadius(rounded ? 10 : 0)
         
     }
     private func getWidth() -> CGFloat {
-        let width = CGFloat(abs(offset.width) / CGFloat(viewModel.actions.count))
         
-        if width < 80  {
-            return 80
+        let width = CGFloat(offset.width / CGFloat(viewModel.actions.count))
+        // - left / + right
+        switch side {
+        case .left:
+            if width < 0 {
+                return addPaddingsIfNeeded(width: abs(width))
+            } else {
+                return 0
+            }
+        case .right:
+            if width > 0 {
+                return addPaddingsIfNeeded(width: abs(width))
+            } else {
+                return 0
+            }
+        }
+        
+    }
+    
+    private func addPaddingsIfNeeded(width:CGFloat) -> CGFloat {
+        if rounded {
+            return width - 5 > 0 ? width - 5 : 0
         } else {
-            return rounded ? width - 5 : width
+            return width
         }
     }
     
@@ -117,27 +140,27 @@ public struct EditActions: View {
 struct EditActions_Previews: PreviewProvider {
     
     static var actions = [
-        Action(title: "No interest", iconName: "trash", bgColor: .delete, action: {}),
-        Action(title: "Request offer", iconName: "doc.text", bgColor: .edit, action: {}),
-        Action(title: "Order", iconName: "doc.text.fill", bgColor: .delete, action: {}),
-        Action(title: "Order provided", iconName: "car", bgColor: .done, action: {}),
+        Action(title: "No interest", iconName: "trash", bgColor: .red, action: {}),
+        Action(title: "Request offer", iconName: "doc.text", bgColor: .yellow, action: {}),
+        Action(title: "Order", iconName: "doc.text.fill", bgColor: .red, action: {}),
+        Action(title: "Order provided", iconName: "car", bgColor: .green, action: {}),
     ]
     static var previews: some View {
         Group {
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), offset: .constant(.zero), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .right, rounded: false)
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), offset: .constant(CGSize.init(width: 300, height: 10)), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .right, rounded: false)
                 .previewLayout(.fixed(width: 450, height: 400))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), offset: .constant(.zero), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .left, rounded: false)
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), offset: .constant(CGSize.init(width: -300, height: 10)), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .left, rounded: false)
                 .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 2), offset: .constant(.zero), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .left, rounded: false)
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 2), offset: .constant(CGSize.init(width: -300, height: 10)), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .left, rounded: false)
                 .previewLayout(.fixed(width: 450, height: 150))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 3), offset: .constant(.zero), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .right, rounded: true)
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 3), offset: .constant(CGSize.init(width: 300, height: 10)), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .right, rounded: true)
                 .previewLayout(.fixed(width: 450, height: 100))
             
-            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), offset: .constant(.zero), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .left, rounded: true)
+            EditActions(viewModel: EditActionsVM(actions, maxActions: 4), offset: .constant(CGSize.init(width: -300, height: 10)), state: .constant(.center), onChangeSwipe: .constant(.noChange), side: .left, rounded: true)
                 .previewLayout(.fixed(width: 550, height: 180))
             
             

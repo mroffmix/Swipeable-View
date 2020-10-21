@@ -56,24 +56,29 @@ Added an example project, with **iOS** target: https://github.com/mroffmix/Swipe
 ### Create array of actions
 
 ```swift
-var leftActions = [
-        Action(title: "Note", iconName: "pencil", bgColor: .note, action: {}),
-        Action(title: "Edit doc", iconName: "doc.text", bgColor: .edit, action: {}),
-        Action(title: "New doc", iconName: "doc.text.fill", bgColor: .done, action: {})
-    ]   
-var rightActions = [Action(title: "Delete", iconName: "trash", bgColor: .delete, action: {})]
+let left = [
+    Action(title: "Note", iconName: "pencil", bgColor: .red, action: {}),
+    Action(title: "Edit doc", iconName: "doc.text", bgColor: .yellow, action: {}),
+    Action(title: "New doc", iconName: "doc.text.fill", bgColor: .green, action: {})
+]
+
+let right = [
+    Action(title: "Note", iconName: "pencil", bgColor: .blue, action: {}),
+    Action(title: "Edit doc", iconName: "doc.text", bgColor: .yellow, action: {})
+]
 ```
 ### Create SwipeableView
 ```swift
 SwipeableView(content: {
-
-  // your view content here
-  
-  },
-  leftActions: Example.leftActions,
-  rightActions: Example.rightActions,
-  rounded: false)
-  .frame(height: 90)
+    GroupBox {
+        Text("View content")
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+},
+leftActions: left,
+rightActions: right,
+rounded: true
+).frame(height: 90)
 ```
 
 ![Swipeable View](https://github.com/mroffmix/SwipebleView/blob/main/Resources/IndependedView.gif)
@@ -94,7 +99,7 @@ leftActions: Example.leftActions,
 rightActions: Example.rightActions,
 rounded: true,
 container: container)
-.frame(height: 140)
+.frame(height: 100)
 ```
 Views behaviour in a container
 

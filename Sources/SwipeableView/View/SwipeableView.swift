@@ -18,17 +18,17 @@ enum OnChangeSwipe {
     case rightStarted
     case noChange
 }
+
 public struct SwipeableView<Content: View>: View {
     @Environment(\.colorScheme) var colorScheme
-    
+    @ObservedObject var viewModel: SWViewModel
+    var container: SwManager?
     var rounded: Bool
     var leftActions: EditActionsVM
-    var rightActions: EditActionsVM
-    @ObservedObject var viewModel: SWViewModel
-    
-    //@State private var onChangeSwipe: OnChangeSwipe = .noChange
-    
+    var rightActions: EditActionsVM    
     let content: Content
+    
+    @State var finishedOffset: CGSize = .zero
     
     public init(@ViewBuilder content: () -> Content, leftActions: [Action], rightActions: [Action], rounded: Bool = false, container: SwManager? = nil ) {
         
@@ -38,7 +38,10 @@ public struct SwipeableView<Content: View>: View {
         self.rounded = rounded
         
         viewModel = SWViewModel(state: .center, size: .zero)
+        self.container = container
+        
         container?.addView(viewModel)
+        
         
     }
     
@@ -46,78 +49,89 @@ public struct SwipeableView<Content: View>: View {
         return content
     }
     
-    private func makeActions() -> AnyView {
-        switch viewModel.onChangeSwipe {
-        case .leftStarted:
-            
-            return AnyView(EditActions(viewModel: leftActions,
-                                       offset: .init(get: {self.viewModel.dragOffset}, set: {self.viewModel.dragOffset = $0}),
-                                       state: .init(get: {self.viewModel.state}, set: {self.viewModel.state = $0}),
-                                       onChangeSwipe: .init(get: {self.viewModel.onChangeSwipe}, set: {self.viewModel.onChangeSwipe = $0}),
-                                       side: .left,
-                                       rounded: rounded)
-                            .transition(.slide))
-                
-            
-        case .rightStarted :
-            
-            return AnyView(EditActions(viewModel: rightActions,
-                                       offset: .init(get: {self.viewModel.dragOffset}, set: {self.viewModel.dragOffset = $0}),
-                                       state: .init(get: {self.viewModel.state}, set: {self.viewModel.state = $0}),
-                                       onChangeSwipe: .init(get: {self.viewModel.onChangeSwipe}, set: {self.viewModel.onChangeSwipe = $0}),
-                                       side: .right,
-                                       rounded: rounded)
-                            .transition(.slide))
-                    
-        case .noChange:
-            return AnyView(EmptyView())
-            
+    public var body: some View {
+        
+        let dragGesture = DragGesture(minimumDistance: 1.0, coordinateSpace: .global)
+            .onChanged(self.onChanged(value:))
+            .onEnded(self.onEnded(value:))
+        
+        return GeometryReader { reader in
+            makeLeftActions()
+            self.makeView(reader)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .offset(x: self.viewModel.dragOffset.width)
+                .zIndex(100)
+                .onTapGesture(count: 1, perform: { self.toCenterWithAnimation()})
+                .highPriorityGesture( dragGesture )
+            makeRightActions()
         }
+    }
+    
+    private func makeRightActions() -> AnyView {
+        
+        return AnyView(EditActions(viewModel: rightActions,
+                                   offset: .init(get: {self.viewModel.dragOffset}, set: {self.viewModel.dragOffset = $0}),
+                                   state: .init(get: {self.viewModel.state}, set: {self.viewModel.state = $0}),
+                                   onChangeSwipe: .init(get: {self.viewModel.onChangeSwipe}, set: {self.viewModel.onChangeSwipe = $0}),
+                                   side: .right,
+                                   rounded: rounded)
+                        .animation(.easeInOut))
+    }
+    
+    private func makeLeftActions() -> AnyView {
+        
+        return AnyView(EditActions(viewModel: leftActions,
+                                   offset: .init(get: {self.viewModel.dragOffset}, set: {self.viewModel.dragOffset = $0}),
+                                   state: .init(get: {self.viewModel.state}, set: {self.viewModel.state = $0}),
+                                   onChangeSwipe: .init(get: {self.viewModel.onChangeSwipe}, set: {self.viewModel.onChangeSwipe = $0}),
+                                   side: .left,
+                                   rounded: rounded)
+                        .animation(.easeInOut))
     }
     
     private func toCenterWithAnimation() {
         withAnimation(.easeOut) {
             self.viewModel.dragOffset = CGSize.zero
             self.viewModel.state = .center
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            withAnimation(Animation.easeOut) {
-                if self.viewModel.state == .center {
-                    self.viewModel.onChangeSwipe = .noChange
-                }
-            }
+            self.viewModel.onChangeSwipe = .noChange
+            self.viewModel.otherTapped()
         }
     }
     
-    private func onChanged(value: DragGesture.Value){
-
+    private func onChanged(value: DragGesture.Value) {
+        
         if self.viewModel.state == .center {
-            if value.translation.width < 0 && value.translation.height > -30 && value.translation.height < 30 {
+            
+            if value.translation.width <= 0  {
+                //&& value.translation.height > -60 && value.translation.height < 60
                 self.viewModel.onChangeSwipe = .leftStarted
                 self.viewModel.dragOffset.width = value.translation.width
-            } else if self.viewModel.dragOffset.width >= 0 && value.translation.height > -30 && value.translation.height < 30{
+                
+            } else if self.viewModel.dragOffset.width >= 0 {
+                //&& value.translation.height > -60 && value.translation.height < 60
                 
                 self.viewModel.onChangeSwipe = .rightStarted
                 self.viewModel.dragOffset.width = value.translation.width
             }
         } else {
-           
-            self.viewModel.dragOffset.width =  self.viewModel.dragOffset.width + ((value.translation.width < 0) ? -2 : 2)
+            // print(value.translation.width)
+            if self.viewModel.dragOffset.width != .zero {
+                self.viewModel.dragOffset.width = finishedOffset.width + value.translation.width
+                //  print(self.viewModel.dragOffset.width)
+            } else {
+                self.viewModel.onChangeSwipe = .noChange
+                self.viewModel.state = .center
+            }
         }
-        
     }
     
-
-    
-    private func onEnded(value: DragGesture.Value){
+    private func onEnded(value: DragGesture.Value) {
         
-        #if DEBUG
-        // print(viewModel.dragOffset)
-        #endif
+        finishedOffset = value.translation
         
-        if self.viewModel.dragOffset.width < 0 {
+        if self.viewModel.dragOffset.width <= 0 {
             // left
-            if self.viewModel.state == .center && value.translation.width < -50 {
+            if self.viewModel.state == .center && value.translation.width <= -50 {
                 
                 var offset = (CGFloat(min(4, self.leftActions.actions.count)) * -80)
                 
@@ -131,10 +145,11 @@ public struct SwipeableView<Content: View>: View {
                 
             } else {
                 self.toCenterWithAnimation()
+                finishedOffset = .zero
             }
             
             
-        } else if self.viewModel.dragOffset.width > 0 {
+        } else if self.viewModel.dragOffset.width >= 0 {
             // right
             if self.viewModel.state == .center && value.translation.width > 50{
                 
@@ -149,54 +164,77 @@ public struct SwipeableView<Content: View>: View {
             } else {
                 self.toCenterWithAnimation()
             }
-            
         }
-        
     }
     
-    public var body: some View {
-        
-        ZStack {
-            makeActions()
-            GeometryReader { reader in
-                self.makeView(reader)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .offset(x: self.viewModel.dragOffset.width)
-                    
-                    .onTapGesture(count: 1, perform: { self.toCenterWithAnimation()})
-                    .gesture( DragGesture(minimumDistance: 10.0, coordinateSpace: .local).onChanged(self.onChanged(value:)).onEnded(self.onEnded(value:)))
-            }
-            
-        }
-    }
+    
 }
 
 @available(iOS 14.0, *)
 struct SwipebleView_Previews: PreviewProvider {
+    @ObservedObject static var container = SwManager()
     static var previews: some View {
-        GeometryReader { reader in
+        
+        let left = [
+            Action(title: "Note", iconName: "pencil", bgColor: .red, action: {}),
+            Action(title: "Edit doc", iconName: "doc.text", bgColor: .yellow, action: {}),
+            Action(title: "New doc", iconName: "doc.text.fill", bgColor: .green, action: {})
+        ]
+        
+        let right = [
+            Action(title: "Note", iconName: "pencil", bgColor: .blue, action: {}),
+            Action(title: "Edit doc", iconName: "doc.text", bgColor: .yellow, action: {})
+        ]
+        
+        return GeometryReader { reader in
             VStack {
                 Spacer()
+                HStack {
+                    Text("Independed view:")
+                        .bold()
+                    Spacer()
+                }
                 SwipeableView(content: {
                     GroupBox {
                         Text("View content")
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                 },
-                leftActions:[
-                    Action(title: "Note", iconName: "pencil", bgColor: .note, action: {}),
-                    Action(title: "Edit doc", iconName: "doc.text", bgColor: .edit, action: {}),
-                    Action(title: "New doc", iconName: "doc.text.fill", bgColor: .done, action: {})
-                ],
-                rightActions: [
-                    Action(title: "Note", iconName: "pencil", bgColor: .note, action: {}),
-                    Action(title: "Edit doc", iconName: "doc.text", bgColor: .edit, action: {})
-                ],
+                leftActions: left,
+                rightActions: right,
                 rounded: true
+                ).frame(height: 90)
+                HStack {
+                    Text("Container:")
+                        .bold()
+                    Spacer()
+                }
+                
+                
+                SwipeableView(content: {
+                    Text("View content")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.blue.opacity(0.5))
+                },
+                leftActions: left,
+                rightActions: right,
+                rounded: false,
+                container: container
+                ).frame(height: 90)
+                
+                SwipeableView(content: {
+                    Text("View content")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.blue.opacity(0.5))
+                },
+                leftActions: left,
+                rightActions: right,
+                rounded: false,
+                container: container
                 ).frame(height: 90)
                 
                 Spacer()
-            }
+            }.padding()
         }
         
     }
