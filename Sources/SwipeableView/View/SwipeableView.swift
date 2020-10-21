@@ -56,14 +56,14 @@ public struct SwipeableView<Content: View>: View {
             .onEnded(self.onEnded(value:))
         
         return GeometryReader { reader in
-            makeLeftActions()
+            self.makeLeftActions()
             self.makeView(reader)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .offset(x: self.viewModel.dragOffset.width)
                 .zIndex(100)
                 .onTapGesture(count: 1, perform: { self.toCenterWithAnimation()})
                 .highPriorityGesture( dragGesture )
-            makeRightActions()
+            self.makeRightActions()
         }
     }
     
